@@ -1,0 +1,10 @@
+section_id,branch,semester,section_name,strength
+CSE-3-A,CSE,3,A,65
+CSE-3-B,CSE,3,B,60
+CSE-5-A,CSE,5,A,55
+CSAI-3-A,CSE (AI & ML),3,A,50
+CSAI-5-A,CSE (AI & ML),5,A,45
+ECE-3-A,ECE,3,A,55
+ECE-5-A,ECE,5,A,50
+ROB-3-A,Robotics & Automation,3,A,40
+ROB-5-A,Robotics & Automation,5,A,28
