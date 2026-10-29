@@ -1,3 +1,12 @@
+/**
+ * Shared TypeScript types mirroring the JSON contracts served by the
+ * Python Algorithm Engine microservice (api/main.py) and returned through
+ * the Next.js Route Handlers.
+ *
+ * Time fields that the engine stores as hours-since-epoch come back over
+ * the wire as ISO datetime strings; UI-facing shapes use ISO strings too.
+ */
+
 export interface Resource {
   resource_id: string;
   name: string;
@@ -16,7 +25,7 @@ export interface AcceptedBooking {
   resource_id: string;
   resource_type?: string;
   start: string; // ISO string
-  end: string;   // ISO string
+  end: string; // ISO string
   priority?: number;
   group_size?: number;
   status?: string;
@@ -108,4 +117,92 @@ export interface AuditEntry {
   resource_id?: string;
   user_id?: string;
   details?: Record<string, unknown>;
+}
+
+export interface AuditResponse {
+  entries: AuditEntry[];
+}
+
+export interface NotificationMessage {
+  user_id?: string;
+  message?: string;
+  request_id?: string;
+  resource_id?: string;
+  [key: string]: unknown;
+}
+
+export interface NotificationResponse {
+  user_id: string;
+  messages: NotificationMessage[];
+}
+
+export interface Recommendation {
+  request_id?: string;
+  resource_id?: string;
+  start?: string;
+  end?: string;
+  [key: string]: unknown;
+}
+
+export interface RecommendationResponse {
+  recommendations: Recommendation[];
+}
+
+export interface ResourceRegistration {
+  resource_id: string;
+  name: string;
+  resource_type: string;
+  capacity: number;
+  threshold_hours?: number;
+  location?: string;
+  department?: string;
+  exclusive_use?: boolean;
+}
+
+export interface TimetableEntryRegistration {
+  entry_id: string;
+  owner_id: string;
+  resource_id: string;
+  resource_type: string;
+  start: string;
+  end: string;
+  role?: string;
+  group_size?: number;
+}
+
+export interface TimetableFinalizeRequest {
+  csv_text: string;
+  actor_id: string;
+  actor_role: string;
+  week_start: string;
+  weeks?: number;
+  replace?: boolean;
+  now?: string;
+}
+
+export interface ManualOverrideRequest {
+  request_id: string;
+  user_id: string;
+  resource_id: string;
+  resource_type: string;
+  start: string;
+  end: string;
+  group_size?: number;
+  actor_id: string;
+  actor_role: string;
+  reason: string;
+  now?: string;
+}
+
+export interface RequestSubmission {
+  request_id: string;
+  user_id: string;
+  resource_id: string;
+  resource_type: string;
+  start: string;
+  end: string;
+  role?: string | null;
+  priority?: number | null;
+  group_size?: number;
+  now?: string;
 }

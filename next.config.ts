@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // Server action & external packages if needed
+  outputFileTracingRoot: path.join(process.cwd()),
 };
 
 export default nextConfig;

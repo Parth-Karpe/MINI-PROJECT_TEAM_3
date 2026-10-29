@@ -12,8 +12,21 @@ dist/
 node_modules/
 .next/
 out/
+.env
 .env*.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+*.log
+*.tsbuildinfo
+local backups
+*.bak
+!.env.example
 
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
