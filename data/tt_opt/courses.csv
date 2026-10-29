@@ -1,0 +1,62 @@
+course_code,course_name,branch,semester,session_type,session_length_hours,weekly_sessions
+CSAI3-DLD,Digital Logic Design,CSE (AI & ML),3,theory,1.0,6
+CSAI3-DM,Discrete Mathematics,CSE (AI & ML),3,theory,1.0,4
+CSAI3-DSA,Data Structures & Algorithms,CSE (AI & ML),3,theory,1.0,5
+CSAI3-DSAL,DSA Lab,CSE (AI & ML),3,lab,2.0,1
+CSAI3-EVS,Environmental Science,CSE (AI & ML),3,theory,1.0,3
+CSAI3-PP,Python Programming,CSE (AI & ML),3,theory,1.0,5
+CSAI3-PPL,Python Programming Lab,CSE (AI & ML),3,lab,2.0,1
+CSAI3-PS,Probability & Statistics,CSE (AI & ML),3,theory,1.0,4
+CSAI5-DBMS,Database Management Systems,CSE (AI & ML),5,theory,1.0,4
+CSAI5-DL,Deep Learning Fundamentals,CSE (AI & ML),5,theory,1.0,6
+CSAI5-DLL,Deep Learning Lab,CSE (AI & ML),5,lab,2.0,1
+CSAI5-ML,Machine Learning,CSE (AI & ML),5,theory,1.0,6
+CSAI5-MLL,ML Lab,CSE (AI & ML),5,lab,2.0,1
+CSAI5-NLP,Intro to NLP,CSE (AI & ML),5,theory,1.0,6
+CSAI5-PE,Professional Ethics,CSE (AI & ML),5,theory,1.0,3
+CSAI5-SE,Software Engineering,CSE (AI & ML),5,theory,1.0,3
+CSE3-CO,Computer Organization,CSE,3,theory,1.0,9
+CSE3-DLD,Digital Logic Design,CSE,3,theory,1.0,9
+CSE3-DM,Discrete Mathematics,CSE,3,theory,1.0,9
+CSE3-DS,Data Structures,CSE,3,theory,1.0,11
+CSE3-DSL,Data Structures Lab,CSE,3,lab,2.0,2
+CSE3-EVS,Environmental Science,CSE,3,theory,1.0,9
+CSE3-OOP,Object Oriented Programming,CSE,3,theory,1.0,8
+CSE3-OOPL,OOP Lab,CSE,3,lab,2.0,2
+CSE5-CN,Computer Networks,CSE,5,theory,1.0,6
+CSE5-DAA,Design & Analysis of Algorithms,CSE,5,theory,1.0,4
+CSE5-DBMS,Database Management Systems,CSE,5,theory,1.0,5
+CSE5-DBMSL,DBMS Lab,CSE,5,lab,2.0,1
+CSE5-OS,Operating Systems,CSE,5,theory,1.0,6
+CSE5-OSL,OS Lab,CSE,5,lab,2.0,1
+CSE5-PE,Professional Ethics,CSE,5,theory,1.0,4
+CSE5-SE,Software Engineering,CSE,5,theory,1.0,3
+ECE3-DE,Digital Electronics,ECE,3,theory,1.0,5
+ECE3-DEL,Digital Electronics Lab,ECE,3,lab,2.0,1
+ECE3-EDC,Electronic Devices & Circuits,ECE,3,theory,1.0,5
+ECE3-EDCL,EDC Lab,ECE,3,lab,2.0,1
+ECE3-EM3,Engineering Mathematics III,ECE,3,theory,1.0,5
+ECE3-EVS,Environmental Science,ECE,3,theory,1.0,2
+ECE3-NT,Network Theory,ECE,3,theory,1.0,5
+ECE3-SS,Signals and Systems,ECE,3,theory,1.0,5
+ECE5-AC,Analog Communication,ECE,5,theory,1.0,5
+ECE5-AWP,Antenna & Wave Propagation,ECE,5,theory,1.0,4
+ECE5-CTRL,Control Systems,ECE,5,theory,1.0,5
+ECE5-MPMC,Microprocessors & Microcontrollers,ECE,5,lab,1.0,5
+ECE5-MPMCL,MPMC Lab,ECE,5,lab,2.0,1
+ECE5-PE,Professional Ethics,ECE,5,theory,1.0,4
+ECE5-VLSI,VLSI Design,ECE,5,theory,1.0,4
+ECE5-VLSIL,VLSI Lab,ECE,5,lab,2.0,1
+ROB3-BOR,Basics of Robotics,Robotics & Automation,3,theory,1.0,3
+ROB3-EG,Engineering Graphics,Robotics & Automation,3,theory,1.0,3
+ROB3-EM,Engineering Mechanics,Robotics & Automation,3,theory,1.0,2
+ROB3-MCP,Microcontroller Programming,Robotics & Automation,3,theory,1.0,2
+ROB3-ROBL,Robotics Lab,Robotics & Automation,3,lab,3.0,1
+ROB3-SA,Sensors and Actuators,Robotics & Automation,3,theory,1.0,2
+ROB5-AI4R,AI for Robotics,Robotics & Automation,5,theory,1.0,6
+ROB5-AI4RL,AI for Robotics Lab,Robotics & Automation,5,lab,2.0,1
+ROB5-CTRL,Control Systems for Robotics,Robotics & Automation,5,theory,1.0,6
+ROB5-EMB,Embedded Systems,Robotics & Automation,5,theory,1.0,6
+ROB5-EMBL,Embedded Systems Lab,Robotics & Automation,5,lab,2.0,1
+ROB5-PE,Professional Ethics,Robotics & Automation,5,theory,1.0,3
+ROB5-PROJ,Mini Project,Robotics & Automation,5,theory,1.0,6

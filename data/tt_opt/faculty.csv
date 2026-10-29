@@ -1,0 +1,27 @@
+faculty_id,name,department,courses_taught
+F001,Dr. Ananya Rao,CSE,CSE3-DS;CSE3-DSL
+F002,Prof. Vikram Desai,CSE,CSAI3-DLD;CSE3-DLD
+F003,Dr. Meera Iyer,CSE,CSAI3-DM;CSE3-DM
+F004,Prof. Arjun Nair,CSE,CSE3-OOP;CSE3-OOPL
+F005,Dr. Kavya Shetty,CSE,CSE3-CO
+F006,Prof. Rahul Kulkarni,CSE,CSE5-OS;CSE5-OSL
+F007,Dr. Priya Menon,CSE,CSE5-CN
+F008,Prof. Suresh Bhat,CSE,CSAI5-DBMS;CSE3-OOPL;CSE5-DBMS;CSE5-DBMSL
+F009,Dr. Neha Joshi,CSE,CSAI5-SE;CSE3-DSL;CSE5-DAA;CSE5-SE
+F010,Prof. Karthik Reddy,CSE (AI & ML),CSAI3-DSA;CSAI3-DSAL
+F011,Dr. Sneha Pillai,CSE (AI & ML),CSAI3-PP;CSAI3-PPL
+F012,Prof. Manoj Hegde,CSE (AI & ML),CSAI5-ML;CSAI5-MLL
+F013,Dr. Divya Rangan,CSE (AI & ML),CSAI5-DL;CSAI5-DLL;CSAI5-NLP
+F014,Prof. Ramesh Iyer,ECE,ECE3-EDC;ECE3-EDCL
+F015,Dr. Lakshmi Narayan,ECE,ECE3-DE;ECE3-DEL
+F016,Prof. Anil Kumar,ECE,ECE3-NT;ECE3-SS
+F017,Dr. Pooja Verma,ECE,ECE5-AC;ECE5-MPMC;ECE5-MPMCL
+F018,Prof. Deepak Shenoy,ECE,ECE5-AWP;ECE5-CTRL;ECE5-VLSI;ECE5-VLSIL
+F019,Dr. Ritu Malhotra,Robotics & Automation,ROB3-BOR;ROB3-ROBL;ROB3-SA
+F020,Prof. Sandeep Gowda,Robotics & Automation,ROB3-EM;ROB3-MCP
+F021,Dr. Anjali Kapoor,Robotics & Automation,ROB5-AI4R;ROB5-AI4RL;ROB5-EMB;ROB5-EMBL
+F022,Prof. Vishal Menon,Robotics & Automation,ROB5-CTRL;ROB5-PROJ
+F024,Prof. Geeta Rao,Science & Humanities,CSAI3-EVS;CSE3-EVS;ECE3-EVS
+F025,Dr. Farah Sheikh,Science & Humanities,CSAI5-PE;CSE5-PE;ECE5-PE;ROB5-PE
+F026,Prof. Ajay Bhandari,Science & Humanities,CSAI3-PS;ECE3-EM3
+F027,Dr. Rekha Nambiar,Robotics & Automation,ROB3-EG
