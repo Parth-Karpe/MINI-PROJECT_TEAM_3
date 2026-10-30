@@ -1,0 +1,249 @@
+entry_id,day,start_time,end_time,branch,semester,section,course_code,course_name,session_type,faculty_id,faculty_name,room_id,expected_students
+E001,Tue,11:15,13:15,CSE,3,A,CSE3-DSL,Data Structures Lab,lab,F001,Dr. Ananya Rao,CS-LAB-1,33
+E002,Fri,11:15,13:15,CSE,3,A,CSE3-OOPL,OOP Lab,lab,F004,Prof. Arjun Nair,CS-LAB-1,33
+E003,Tue,11:15,13:15,CSE,3,B,CSE3-DSL,Data Structures Lab,lab,F009,Dr. Neha Joshi,CS-LAB-1,30
+E004,Wed,09:00,11:00,CSE,3,B,CSE3-OOPL,OOP Lab,lab,F008,Prof. Suresh Bhat,CS-LAB-1,30
+E005,Wed,11:15,13:15,CSE,5,A,CSE5-DBMSL,DBMS Lab,lab,F008,Prof. Suresh Bhat,CS-LAB-1,28
+E006,Thu,14:00,16:00,CSE,5,A,CSE5-OSL,OS Lab,lab,F006,Prof. Rahul Kulkarni,CS-LAB-1,28
+E007,Wed,11:15,13:15,CSE (AI & ML),3,A,CSAI3-DSAL,DSA Lab,lab,F010,Prof. Karthik Reddy,CS-LAB-2,50
+E008,Thu,11:15,13:15,CSE (AI & ML),3,A,CSAI3-PPL,Python Programming Lab,lab,F011,Dr. Sneha Pillai,CS-LAB-2,50
+E009,Wed,14:00,16:00,CSE (AI & ML),5,A,CSAI5-MLL,ML Lab,lab,F012,Prof. Manoj Hegde,CS-LAB-2,45
+E010,Fri,14:00,16:00,CSE (AI & ML),5,A,CSAI5-DLL,Deep Learning Lab,lab,F013,Dr. Divya Rangan,CS-LAB-2,23
+E011,Tue,11:15,13:15,ECE,3,A,ECE3-EDCL,EDC Lab,lab,F014,Prof. Ramesh Iyer,ECE-LAB-1,28
+E012,Thu,11:15,13:15,ECE,3,A,ECE3-DEL,Digital Electronics Lab,lab,F015,Dr. Lakshmi Narayan,ECE-LAB-2,28
+E013,Tue,10:00,11:00,ECE,5,A,ECE5-MPMC,Microprocessors & Microcontrollers,lab,F017,Dr. Pooja Verma,ECE-CLASSROOM-201,50
+E014,Tue,11:00,13:00,ECE,5,A,ECE5-MPMCL,MPMC Lab,lab,F017,Dr. Pooja Verma,CS-LAB-2,50
+E015,Thu,14:00,16:00,ECE,5,A,ECE5-VLSIL,VLSI Lab,lab,F018,Prof. Deepak Shenoy,ECE-LAB-2,25
+E016,Wed,11:15,13:15,Robotics & Automation,5,A,ROB5-EMBL,Embedded Systems Lab,lab,F021,Dr. Anjali Kapoor,ECE-LAB-1,14
+E017,Fri,11:15,13:15,Robotics & Automation,5,A,ROB5-AI4RL,AI for Robotics Lab,lab,F021,Dr. Anjali Kapoor,ECE-LAB-2,14
+E018,Mon,09:00,10:00,CSE,3,A,CSE3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-101,65
+E019,Mon,09:00,10:00,CSE (AI & ML),3,A,CSAI3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-102,50
+E020,Thu,10:00,11:00,CSE,5,A,CSE5-OS,Operating Systems,theory,F006,Prof. Rahul Kulkarni,CS-CLASSROOM-101,55
+E021,Thu,10:00,11:00,CSE,5,A,CSE5-CN,Computer Networks,theory,F007,Dr. Priya Menon,CS-CLASSROOM-102,55
+E022,Mon,08:00,09:00,Robotics & Automation,3,A,ROB3-BOR,Basics of Robotics,theory,F019,Dr. Ritu Malhotra,ECE-LAB-1,40
+E023,Mon,09:00,10:00,Robotics & Automation,3,A,ROB3-SA,Sensors and Actuators,theory,F019,Dr. Ritu Malhotra,ECE-LAB-1,40
+E024,Mon,10:00,11:00,Robotics & Automation,3,A,ROB3-MCP,Microcontroller Programming,theory,F020,Prof. Sandeep Gowda,ECE-LAB-1,40
+E025,Mon,11:15,12:15,Robotics & Automation,3,A,ROB3-EM,Engineering Mechanics,theory,F020,Prof. Sandeep Gowda,ECE-LAB-1,40
+E026,Mon,12:15,13:15,Robotics & Automation,3,A,ROB3-EG,Engineering Graphics,theory,F027,Dr. Rekha Nambiar,ECE-LAB-1,40
+E027,Mon,14:00,17:00,Robotics & Automation,3,A,ROB3-ROBL,Robotics Lab,lab,F019,Dr. Ritu Malhotra,ECE-LAB-1,20
+E028,Tue,10:00,11:00,Robotics & Automation,3,A,ROB3-EG,Engineering Graphics,theory,F027,Dr. Rekha Nambiar,ECE-LAB-1,40
+E029,Tue,09:00,10:00,Robotics & Automation,3,A,ROB3-BOR,Basics of Robotics,theory,F019,Dr. Ritu Malhotra,ECE-LAB-1,40
+E030,Wed,10:00,11:00,Robotics & Automation,3,A,ROB3-EM,Engineering Mechanics,theory,F020,Prof. Sandeep Gowda,ECE-LAB-1,40
+E031,Wed,09:00,10:00,Robotics & Automation,3,A,ROB3-MCP,Microcontroller Programming,theory,F020,Prof. Sandeep Gowda,ECE-LAB-1,40
+E032,Thu,09:00,10:00,Robotics & Automation,3,A,ROB3-SA,Sensors and Actuators,theory,F019,Dr. Ritu Malhotra,ECE-LAB-1,40
+E033,Thu,10:00,11:00,Robotics & Automation,3,A,ROB3-EG,Engineering Graphics,theory,F027,Dr. Rekha Nambiar,ECE-LAB-1,40
+E034,Fri,09:00,10:00,Robotics & Automation,3,A,ROB3-BOR,Basics of Robotics,theory,F019,Dr. Ritu Malhotra,ECE-LAB-1,40
+E035,Mon,08:00,09:00,CSE,3,A,CSE3-DS,Data Structures,theory,F001,Dr. Ananya Rao,CS-CLASSROOM-101,65
+E036,Mon,10:00,11:00,CSE,3,A,CSE3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-101,65
+E037,Mon,11:15,12:15,CSE,3,A,CSE3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-101,65
+E038,Mon,12:15,13:15,CSE,3,A,CSE3-OOP,Object Oriented Programming,theory,F004,Prof. Arjun Nair,CS-CLASSROOM-101,65
+E039,Mon,14:00,15:00,CSE,3,A,CSE3-CO,Computer Organization,theory,F005,Dr. Kavya Shetty,CS-CLASSROOM-101,65
+E040,Mon,15:00,16:00,CSE,3,A,CSE3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CS-CLASSROOM-101,65
+E041,Mon,16:00,17:00,CSE,3,A,CSE3-DS,Data Structures,theory,F001,Dr. Ananya Rao,CS-CLASSROOM-101,65
+E042,Tue,09:00,10:00,CSE,3,A,CSE3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-101,65
+E043,Tue,10:00,11:00,CSE,3,A,CSE3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-101,65
+E044,Tue,14:00,15:00,CSE,3,A,CSE3-OOP,Object Oriented Programming,theory,F004,Prof. Arjun Nair,CS-CLASSROOM-101,65
+E045,Wed,08:00,09:00,CSE,3,A,CSE3-CO,Computer Organization,theory,F005,Dr. Kavya Shetty,CS-CLASSROOM-101,65
+E046,Wed,09:00,10:00,CSE,3,A,CSE3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CS-CLASSROOM-101,65
+E047,Wed,10:00,11:00,CSE,3,A,CSE3-DS,Data Structures,theory,F001,Dr. Ananya Rao,CS-CLASSROOM-101,65
+E048,Wed,11:15,12:15,CSE,3,A,CSE3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-101,65
+E049,Wed,12:15,13:15,CSE,3,A,CSE3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-101,65
+E050,Wed,14:00,15:00,CSE,3,A,CSE3-OOP,Object Oriented Programming,theory,F004,Prof. Arjun Nair,CS-CLASSROOM-101,65
+E051,Wed,15:00,16:00,CSE,3,A,CSE3-CO,Computer Organization,theory,F005,Dr. Kavya Shetty,CS-CLASSROOM-101,65
+E052,Thu,10:00,11:00,CSE,3,A,CSE3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CS-SEMINAR-HALL,65
+E053,Thu,11:15,12:15,CSE,3,A,CSE3-DS,Data Structures,theory,F001,Dr. Ananya Rao,CS-CLASSROOM-101,65
+E054,Thu,12:15,13:15,CSE,3,A,CSE3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-101,65
+E055,Thu,14:00,15:00,CSE,3,A,CSE3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-101,65
+E056,Thu,15:00,16:00,CSE,3,A,CSE3-OOP,Object Oriented Programming,theory,F004,Prof. Arjun Nair,CS-CLASSROOM-101,65
+E057,Thu,16:00,17:00,CSE,3,A,CSE3-CO,Computer Organization,theory,F005,Dr. Kavya Shetty,CS-CLASSROOM-101,65
+E058,Fri,09:00,10:00,CSE,3,A,CSE3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CS-CLASSROOM-101,65
+E059,Fri,10:00,11:00,CSE,3,A,CSE3-DS,Data Structures,theory,F001,Dr. Ananya Rao,CS-CLASSROOM-101,65
+E060,Fri,14:00,15:00,CSE,3,A,CSE3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-101,65
+E061,Mon,09:00,10:00,CSE,3,B,CSE3-DS,Data Structures,theory,F001,Dr. Ananya Rao,CS-SEMINAR-HALL,60
+E062,Mon,10:00,11:00,CSE,3,B,CSE3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-102,60
+E063,Mon,11:15,12:15,CSE,3,B,CSE3-OOP,Object Oriented Programming,theory,F004,Prof. Arjun Nair,CS-CLASSROOM-102,60
+E064,Mon,12:15,13:15,CSE,3,B,CSE3-CO,Computer Organization,theory,F005,Dr. Kavya Shetty,CS-CLASSROOM-102,60
+E065,Mon,14:00,15:00,CSE,3,B,CSE3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CS-CLASSROOM-102,60
+E066,Tue,08:00,09:00,CSE,3,B,CSE3-DS,Data Structures,theory,F001,Dr. Ananya Rao,CS-CLASSROOM-102,60
+E067,Tue,09:00,10:00,CSE,3,B,CSE3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-102,60
+E068,Tue,10:00,11:00,CSE,3,B,CSE3-OOP,Object Oriented Programming,theory,F004,Prof. Arjun Nair,CS-CLASSROOM-102,60
+E069,Tue,14:00,15:00,CSE,3,B,CSE3-CO,Computer Organization,theory,F005,Dr. Kavya Shetty,CS-CLASSROOM-102,60
+E070,Tue,15:00,16:00,CSE,3,B,CSE3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CS-CLASSROOM-102,60
+E071,Wed,11:15,12:15,CSE,3,B,CSE3-DS,Data Structures,theory,F001,Dr. Ananya Rao,CS-CLASSROOM-102,60
+E072,Wed,12:15,13:15,CSE,3,B,CSE3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-102,60
+E073,Wed,14:00,15:00,CSE,3,B,CSE3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-102,60
+E074,Wed,15:00,16:00,CSE,3,B,CSE3-OOP,Object Oriented Programming,theory,F004,Prof. Arjun Nair,CS-CLASSROOM-102,60
+E075,Wed,16:00,17:00,CSE,3,B,CSE3-CO,Computer Organization,theory,F005,Dr. Kavya Shetty,CS-CLASSROOM-102,60
+E076,Thu,08:00,09:00,CSE,3,B,CSE3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CS-CLASSROOM-102,60
+E077,Thu,09:00,10:00,CSE,3,B,CSE3-DS,Data Structures,theory,F001,Dr. Ananya Rao,CS-CLASSROOM-102,60
+E078,Thu,10:00,11:00,CSE,3,B,CSE3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CIVIL-CLASSROOM-501,60
+E079,Thu,11:15,12:15,CSE,3,B,CSE3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-102,60
+E080,Thu,12:15,13:15,CSE,3,B,CSE3-OOP,Object Oriented Programming,theory,F004,Prof. Arjun Nair,CS-CLASSROOM-102,60
+E081,Thu,14:00,15:00,CSE,3,B,CSE3-CO,Computer Organization,theory,F005,Dr. Kavya Shetty,CS-CLASSROOM-102,60
+E082,Thu,15:00,16:00,CSE,3,B,CSE3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CS-CLASSROOM-102,60
+E083,Thu,16:00,17:00,CSE,3,B,CSE3-DS,Data Structures,theory,F001,Dr. Ananya Rao,CS-CLASSROOM-102,60
+E084,Fri,10:00,11:00,CSE,3,B,CSE3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-102,60
+E085,Fri,11:15,12:15,CSE,3,B,CSE3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-102,60
+E086,Fri,12:15,13:15,CSE,3,B,CSE3-CO,Computer Organization,theory,F005,Dr. Kavya Shetty,CS-CLASSROOM-102,60
+E087,Fri,14:00,15:00,CSE,3,B,CSE3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CS-CLASSROOM-102,60
+E088,Fri,15:00,16:00,CSE,3,B,CSE3-DS,Data Structures,theory,F001,Dr. Ananya Rao,CS-CLASSROOM-102,60
+E089,Mon,10:00,11:00,CSE,5,A,CSE5-OS,Operating Systems,theory,F006,Prof. Rahul Kulkarni,CS-SEMINAR-HALL,55
+E090,Mon,11:15,12:15,CSE,5,A,CSE5-CN,Computer Networks,theory,F007,Dr. Priya Menon,CS-SEMINAR-HALL,55
+E091,Mon,12:15,13:15,CSE,5,A,CSE5-DBMS,Database Management Systems,theory,F008,Prof. Suresh Bhat,CS-SEMINAR-HALL,55
+E092,Mon,14:00,15:00,CSE,5,A,CSE5-DAA,Design & Analysis of Algorithms,theory,F009,Dr. Neha Joshi,CS-SEMINAR-HALL,55
+E093,Mon,15:00,16:00,CSE,5,A,CSE5-SE,Software Engineering,theory,F009,Dr. Neha Joshi,CS-SEMINAR-HALL,55
+E094,Mon,16:00,17:00,CSE,5,A,CSE5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,CS-SEMINAR-HALL,55
+E095,Tue,08:00,09:00,CSE,5,A,CSE5-OS,Operating Systems,theory,F006,Prof. Rahul Kulkarni,CS-SEMINAR-HALL,55
+E096,Tue,09:00,10:00,CSE,5,A,CSE5-CN,Computer Networks,theory,F007,Dr. Priya Menon,CS-SEMINAR-HALL,55
+E097,Tue,10:00,11:00,CSE,5,A,CSE5-DBMS,Database Management Systems,theory,F008,Prof. Suresh Bhat,CS-SEMINAR-HALL,55
+E098,Tue,11:15,12:15,CSE,5,A,CSE5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,CS-SEMINAR-HALL,55
+E099,Tue,12:15,13:15,CSE,5,A,CSE5-OS,Operating Systems,theory,F006,Prof. Rahul Kulkarni,CS-SEMINAR-HALL,55
+E100,Tue,14:00,15:00,CSE,5,A,CSE5-CN,Computer Networks,theory,F007,Dr. Priya Menon,CS-SEMINAR-HALL,55
+E101,Tue,15:00,16:00,CSE,5,A,CSE5-DBMS,Database Management Systems,theory,F008,Prof. Suresh Bhat,CS-SEMINAR-HALL,55
+E102,Tue,16:00,17:00,CSE,5,A,CSE5-DAA,Design & Analysis of Algorithms,theory,F009,Dr. Neha Joshi,CS-SEMINAR-HALL,55
+E103,Wed,09:00,10:00,CSE,5,A,CSE5-SE,Software Engineering,theory,F009,Dr. Neha Joshi,CS-SEMINAR-HALL,55
+E104,Wed,10:00,11:00,CSE,5,A,CSE5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,CS-SEMINAR-HALL,55
+E105,Wed,14:00,15:00,CSE,5,A,CSE5-OS,Operating Systems,theory,F006,Prof. Rahul Kulkarni,CS-SEMINAR-HALL,55
+E106,Thu,08:00,09:00,CSE,5,A,CSE5-CN,Computer Networks,theory,F007,Dr. Priya Menon,CS-SEMINAR-HALL,55
+E107,Thu,09:00,10:00,CSE,5,A,CSE5-DBMS,Database Management Systems,theory,F008,Prof. Suresh Bhat,CS-SEMINAR-HALL,55
+E108,Thu,11:15,12:15,CSE,5,A,CSE5-DAA,Design & Analysis of Algorithms,theory,F009,Dr. Neha Joshi,CS-SEMINAR-HALL,55
+E109,Thu,12:15,13:15,CSE,5,A,CSE5-SE,Software Engineering,theory,F009,Dr. Neha Joshi,CS-SEMINAR-HALL,55
+E110,Fri,09:00,10:00,CSE,5,A,CSE5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,CS-SEMINAR-HALL,55
+E111,Fri,10:00,11:00,CSE,5,A,CSE5-OS,Operating Systems,theory,F006,Prof. Rahul Kulkarni,CS-SEMINAR-HALL,55
+E112,Fri,11:15,12:15,CSE,5,A,CSE5-CN,Computer Networks,theory,F007,Dr. Priya Menon,CS-SEMINAR-HALL,55
+E113,Fri,12:15,13:15,CSE,5,A,CSE5-DBMS,Database Management Systems,theory,F008,Prof. Suresh Bhat,CS-SEMINAR-HALL,55
+E114,Fri,14:00,15:00,CSE,5,A,CSE5-DAA,Design & Analysis of Algorithms,theory,F009,Dr. Neha Joshi,CS-SEMINAR-HALL,55
+E115,Mon,08:00,09:00,CSE (AI & ML),3,A,CSAI3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-102,50
+E116,Mon,10:00,11:00,CSE (AI & ML),3,A,CSAI3-DSA,Data Structures & Algorithms,theory,F010,Prof. Karthik Reddy,CIVIL-CLASSROOM-501,50
+E117,Mon,11:15,12:15,CSE (AI & ML),3,A,CSAI3-PP,Python Programming,theory,F011,Dr. Sneha Pillai,CIVIL-CLASSROOM-501,50
+E118,Mon,12:15,13:15,CSE (AI & ML),3,A,CSAI3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CIVIL-CLASSROOM-501,50
+E119,Mon,14:00,15:00,CSE (AI & ML),3,A,CSAI3-PS,Probability & Statistics,theory,F026,Prof. Ajay Bhandari,CIVIL-CLASSROOM-501,50
+E120,Mon,15:00,16:00,CSE (AI & ML),3,A,CSAI3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-102,50
+E121,Tue,10:00,11:00,CSE (AI & ML),3,A,CSAI3-DSA,Data Structures & Algorithms,theory,F010,Prof. Karthik Reddy,CIVIL-CLASSROOM-501,50
+E122,Tue,11:15,12:15,CSE (AI & ML),3,A,CSAI3-PP,Python Programming,theory,F011,Dr. Sneha Pillai,CS-CLASSROOM-102,50
+E123,Tue,12:15,13:15,CSE (AI & ML),3,A,CSAI3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-102,50
+E124,Tue,14:00,15:00,CSE (AI & ML),3,A,CSAI3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CIVIL-CLASSROOM-501,50
+E125,Tue,15:00,16:00,CSE (AI & ML),3,A,CSAI3-PS,Probability & Statistics,theory,F026,Prof. Ajay Bhandari,CS-CLASSROOM-101,50
+E126,Tue,16:00,17:00,CSE (AI & ML),3,A,CSAI3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-102,50
+E127,Wed,08:00,09:00,CSE (AI & ML),3,A,CSAI3-DSA,Data Structures & Algorithms,theory,F010,Prof. Karthik Reddy,CS-CLASSROOM-102,50
+E128,Wed,09:00,10:00,CSE (AI & ML),3,A,CSAI3-PP,Python Programming,theory,F011,Dr. Sneha Pillai,CS-CLASSROOM-102,50
+E129,Wed,10:00,11:00,CSE (AI & ML),3,A,CSAI3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-102,50
+E130,Wed,14:00,15:00,CSE (AI & ML),3,A,CSAI3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CIVIL-CLASSROOM-501,50
+E131,Wed,15:00,16:00,CSE (AI & ML),3,A,CSAI3-PS,Probability & Statistics,theory,F026,Prof. Ajay Bhandari,CS-SEMINAR-HALL,50
+E132,Wed,16:00,17:00,CSE (AI & ML),3,A,CSAI3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-101,50
+E133,Thu,09:00,10:00,CSE (AI & ML),3,A,CSAI3-DSA,Data Structures & Algorithms,theory,F010,Prof. Karthik Reddy,CS-CLASSROOM-101,50
+E134,Thu,10:00,11:00,CSE (AI & ML),3,A,CSAI3-PP,Python Programming,theory,F011,Dr. Sneha Pillai,SEMINAR-HALL-1,50
+E135,Thu,14:00,15:00,CSE (AI & ML),3,A,CSAI3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,CS-SEMINAR-HALL,50
+E136,Fri,10:00,11:00,CSE (AI & ML),3,A,CSAI3-PS,Probability & Statistics,theory,F026,Prof. Ajay Bhandari,CIVIL-CLASSROOM-501,50
+E137,Fri,11:15,12:15,CSE (AI & ML),3,A,CSAI3-DLD,Digital Logic Design,theory,F002,Prof. Vikram Desai,CS-CLASSROOM-101,50
+E138,Fri,12:15,13:15,CSE (AI & ML),3,A,CSAI3-DSA,Data Structures & Algorithms,theory,F010,Prof. Karthik Reddy,CS-CLASSROOM-101,50
+E139,Fri,14:00,15:00,CSE (AI & ML),3,A,CSAI3-PP,Python Programming,theory,F011,Dr. Sneha Pillai,CIVIL-CLASSROOM-501,50
+E140,Fri,15:00,16:00,CSE (AI & ML),3,A,CSAI3-DM,Discrete Mathematics,theory,F003,Dr. Meera Iyer,CS-CLASSROOM-101,50
+E141,Mon,09:00,10:00,CSE (AI & ML),5,A,CSAI5-ML,Machine Learning,theory,F012,Prof. Manoj Hegde,CIVIL-CLASSROOM-501,45
+E142,Mon,10:00,11:00,CSE (AI & ML),5,A,CSAI5-DL,Deep Learning Fundamentals,theory,F013,Dr. Divya Rangan,SEMINAR-HALL-1,45
+E143,Mon,11:15,12:15,CSE (AI & ML),5,A,CSAI5-DBMS,Database Management Systems,theory,F008,Prof. Suresh Bhat,SEMINAR-HALL-1,45
+E144,Mon,12:15,13:15,CSE (AI & ML),5,A,CSAI5-NLP,Intro to NLP,theory,F013,Dr. Divya Rangan,SEMINAR-HALL-1,45
+E145,Mon,14:00,15:00,CSE (AI & ML),5,A,CSAI5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,SEMINAR-HALL-1,45
+E146,Tue,08:00,09:00,CSE (AI & ML),5,A,CSAI5-ML,Machine Learning,theory,F012,Prof. Manoj Hegde,CS-CLASSROOM-101,45
+E147,Tue,09:00,10:00,CSE (AI & ML),5,A,CSAI5-DL,Deep Learning Fundamentals,theory,F013,Dr. Divya Rangan,CIVIL-CLASSROOM-501,45
+E148,Tue,10:00,11:00,CSE (AI & ML),5,A,CSAI5-NLP,Intro to NLP,theory,F013,Dr. Divya Rangan,SEMINAR-HALL-1,45
+E149,Tue,11:15,12:15,CSE (AI & ML),5,A,CSAI5-ML,Machine Learning,theory,F012,Prof. Manoj Hegde,CS-CLASSROOM-101,45
+E150,Tue,12:15,13:15,CSE (AI & ML),5,A,CSAI5-DL,Deep Learning Fundamentals,theory,F013,Dr. Divya Rangan,CS-CLASSROOM-101,45
+E151,Tue,14:00,15:00,CSE (AI & ML),5,A,CSAI5-DBMS,Database Management Systems,theory,F008,Prof. Suresh Bhat,SEMINAR-HALL-1,45
+E152,Tue,15:00,16:00,CSE (AI & ML),5,A,CSAI5-NLP,Intro to NLP,theory,F013,Dr. Divya Rangan,CIVIL-CLASSROOM-501,45
+E153,Wed,08:00,09:00,CSE (AI & ML),5,A,CSAI5-SE,Software Engineering,theory,F009,Dr. Neha Joshi,CS-SEMINAR-HALL,45
+E154,Wed,09:00,10:00,CSE (AI & ML),5,A,CSAI5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,CIVIL-CLASSROOM-501,45
+E155,Wed,10:00,11:00,CSE (AI & ML),5,A,CSAI5-ML,Machine Learning,theory,F012,Prof. Manoj Hegde,CIVIL-CLASSROOM-501,45
+E156,Wed,11:15,12:15,CSE (AI & ML),5,A,CSAI5-DL,Deep Learning Fundamentals,theory,F013,Dr. Divya Rangan,CS-SEMINAR-HALL,45
+E157,Wed,12:15,13:15,CSE (AI & ML),5,A,CSAI5-NLP,Intro to NLP,theory,F013,Dr. Divya Rangan,CS-SEMINAR-HALL,45
+E158,Wed,16:00,17:00,CSE (AI & ML),5,A,CSAI5-SE,Software Engineering,theory,F009,Dr. Neha Joshi,CS-SEMINAR-HALL,45
+E159,Thu,11:15,12:15,CSE (AI & ML),5,A,CSAI5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,CIVIL-CLASSROOM-501,45
+E160,Thu,12:15,13:15,CSE (AI & ML),5,A,CSAI5-ML,Machine Learning,theory,F012,Prof. Manoj Hegde,CIVIL-CLASSROOM-501,45
+E161,Thu,14:00,15:00,CSE (AI & ML),5,A,CSAI5-DL,Deep Learning Fundamentals,theory,F013,Dr. Divya Rangan,CIVIL-CLASSROOM-501,45
+E162,Thu,15:00,16:00,CSE (AI & ML),5,A,CSAI5-DBMS,Database Management Systems,theory,F008,Prof. Suresh Bhat,CS-SEMINAR-HALL,45
+E163,Thu,16:00,17:00,CSE (AI & ML),5,A,CSAI5-NLP,Intro to NLP,theory,F013,Dr. Divya Rangan,CS-SEMINAR-HALL,45
+E164,Fri,08:00,09:00,CSE (AI & ML),5,A,CSAI5-SE,Software Engineering,theory,F009,Dr. Neha Joshi,CS-CLASSROOM-101,45
+E165,Fri,09:00,10:00,CSE (AI & ML),5,A,CSAI5-ML,Machine Learning,theory,F012,Prof. Manoj Hegde,CS-CLASSROOM-102,45
+E166,Fri,10:00,11:00,CSE (AI & ML),5,A,CSAI5-DL,Deep Learning Fundamentals,theory,F013,Dr. Divya Rangan,SEMINAR-HALL-1,45
+E167,Fri,11:15,12:15,CSE (AI & ML),5,A,CSAI5-DBMS,Database Management Systems,theory,F008,Prof. Suresh Bhat,CIVIL-CLASSROOM-501,45
+E168,Fri,12:15,13:15,CSE (AI & ML),5,A,CSAI5-NLP,Intro to NLP,theory,F013,Dr. Divya Rangan,CIVIL-CLASSROOM-501,45
+E169,Mon,08:00,09:00,ECE,3,A,ECE3-EDC,Electronic Devices & Circuits,theory,F014,Prof. Ramesh Iyer,ECE-CLASSROOM-201,55
+E170,Mon,09:00,10:00,ECE,3,A,ECE3-DE,Digital Electronics,theory,F015,Dr. Lakshmi Narayan,ECE-CLASSROOM-201,55
+E171,Mon,10:00,11:00,ECE,3,A,ECE3-NT,Network Theory,theory,F016,Prof. Anil Kumar,ECE-CLASSROOM-201,55
+E172,Mon,11:15,12:15,ECE,3,A,ECE3-SS,Signals and Systems,theory,F016,Prof. Anil Kumar,ECE-CLASSROOM-201,55
+E173,Mon,12:15,13:15,ECE,3,A,ECE3-EM3,Engineering Mathematics III,theory,F026,Prof. Ajay Bhandari,ECE-CLASSROOM-201,55
+E174,Mon,14:00,15:00,ECE,3,A,ECE3-EDC,Electronic Devices & Circuits,theory,F014,Prof. Ramesh Iyer,ECE-CLASSROOM-201,55
+E175,Mon,15:00,16:00,ECE,3,A,ECE3-DE,Digital Electronics,theory,F015,Dr. Lakshmi Narayan,ECE-CLASSROOM-201,55
+E176,Tue,09:00,10:00,ECE,3,A,ECE3-NT,Network Theory,theory,F016,Prof. Anil Kumar,ECE-CLASSROOM-201,55
+E177,Tue,10:00,11:00,ECE,3,A,ECE3-SS,Signals and Systems,theory,F016,Prof. Anil Kumar,EEE-CLASSROOM-301,55
+E178,Tue,14:00,15:00,ECE,3,A,ECE3-EM3,Engineering Mathematics III,theory,F026,Prof. Ajay Bhandari,ECE-CLASSROOM-201,55
+E179,Wed,10:00,11:00,ECE,3,A,ECE3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,ECE-CLASSROOM-201,55
+E180,Wed,11:15,12:15,ECE,3,A,ECE3-EDC,Electronic Devices & Circuits,theory,F014,Prof. Ramesh Iyer,ECE-CLASSROOM-201,55
+E181,Wed,12:15,13:15,ECE,3,A,ECE3-DE,Digital Electronics,theory,F015,Dr. Lakshmi Narayan,ECE-CLASSROOM-201,55
+E182,Wed,14:00,15:00,ECE,3,A,ECE3-NT,Network Theory,theory,F016,Prof. Anil Kumar,ECE-CLASSROOM-201,55
+E183,Wed,15:00,16:00,ECE,3,A,ECE3-SS,Signals and Systems,theory,F016,Prof. Anil Kumar,ECE-CLASSROOM-201,55
+E184,Wed,16:00,17:00,ECE,3,A,ECE3-EM3,Engineering Mathematics III,theory,F026,Prof. Ajay Bhandari,ECE-CLASSROOM-201,55
+E185,Thu,08:00,09:00,ECE,3,A,ECE3-EDC,Electronic Devices & Circuits,theory,F014,Prof. Ramesh Iyer,ECE-CLASSROOM-201,55
+E186,Thu,09:00,10:00,ECE,3,A,ECE3-DE,Digital Electronics,theory,F015,Dr. Lakshmi Narayan,ECE-CLASSROOM-201,55
+E187,Thu,10:00,11:00,ECE,3,A,ECE3-NT,Network Theory,theory,F016,Prof. Anil Kumar,ECE-CLASSROOM-201,55
+E188,Thu,14:00,15:00,ECE,3,A,ECE3-SS,Signals and Systems,theory,F016,Prof. Anil Kumar,ECE-CLASSROOM-201,55
+E189,Thu,15:00,16:00,ECE,3,A,ECE3-EM3,Engineering Mathematics III,theory,F026,Prof. Ajay Bhandari,ECE-CLASSROOM-201,55
+E190,Thu,16:00,17:00,ECE,3,A,ECE3-EVS,Environmental Science,theory,F024,Prof. Geeta Rao,ECE-CLASSROOM-201,55
+E191,Fri,09:00,10:00,ECE,3,A,ECE3-EDC,Electronic Devices & Circuits,theory,F014,Prof. Ramesh Iyer,ECE-CLASSROOM-201,55
+E192,Fri,10:00,11:00,ECE,3,A,ECE3-DE,Digital Electronics,theory,F015,Dr. Lakshmi Narayan,ECE-CLASSROOM-201,55
+E193,Fri,11:15,12:15,ECE,3,A,ECE3-NT,Network Theory,theory,F016,Prof. Anil Kumar,ECE-CLASSROOM-201,55
+E194,Fri,12:15,13:15,ECE,3,A,ECE3-SS,Signals and Systems,theory,F016,Prof. Anil Kumar,ECE-CLASSROOM-201,55
+E195,Fri,14:00,15:00,ECE,3,A,ECE3-EM3,Engineering Mathematics III,theory,F026,Prof. Ajay Bhandari,ECE-CLASSROOM-201,55
+E196,Mon,09:00,10:00,ECE,5,A,ECE5-AC,Analog Communication,theory,F017,Dr. Pooja Verma,EEE-CLASSROOM-301,50
+E197,Mon,10:00,11:00,ECE,5,A,ECE5-CTRL,Control Systems,theory,F018,Prof. Deepak Shenoy,EEE-CLASSROOM-301,50
+E198,Mon,11:15,12:15,ECE,5,A,ECE5-MPMC,Microprocessors & Microcontrollers,theory,F017,Dr. Pooja Verma,EEE-CLASSROOM-301,50
+E199,Mon,12:15,13:15,ECE,5,A,ECE5-AWP,Antenna & Wave Propagation,theory,F018,Prof. Deepak Shenoy,EEE-CLASSROOM-301,50
+E200,Mon,14:00,15:00,ECE,5,A,ECE5-VLSI,VLSI Design,theory,F018,Prof. Deepak Shenoy,EEE-CLASSROOM-301,50
+E201,Tue,09:00,10:00,ECE,5,A,ECE5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,EEE-CLASSROOM-301,50
+E202,Tue,14:00,15:00,ECE,5,A,ECE5-AC,Analog Communication,theory,F017,Dr. Pooja Verma,EEE-CLASSROOM-301,50
+E203,Tue,15:00,16:00,ECE,5,A,ECE5-CTRL,Control Systems,theory,F018,Prof. Deepak Shenoy,ECE-CLASSROOM-201,50
+E204,Tue,16:00,17:00,ECE,5,A,ECE5-MPMC,Microprocessors & Microcontrollers,theory,F017,Dr. Pooja Verma,ECE-CLASSROOM-201,50
+E205,Wed,10:00,11:00,ECE,5,A,ECE5-AWP,Antenna & Wave Propagation,theory,F018,Prof. Deepak Shenoy,EEE-CLASSROOM-301,50
+E206,Wed,11:15,12:15,ECE,5,A,ECE5-VLSI,VLSI Design,theory,F018,Prof. Deepak Shenoy,EEE-CLASSROOM-301,50
+E207,Wed,12:15,13:15,ECE,5,A,ECE5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,EEE-CLASSROOM-301,50
+E208,Wed,14:00,15:00,ECE,5,A,ECE5-AC,Analog Communication,theory,F017,Dr. Pooja Verma,EEE-CLASSROOM-301,50
+E209,Wed,15:00,16:00,ECE,5,A,ECE5-CTRL,Control Systems,theory,F018,Prof. Deepak Shenoy,EEE-CLASSROOM-301,50
+E210,Wed,16:00,17:00,ECE,5,A,ECE5-MPMC,Microprocessors & Microcontrollers,theory,F017,Dr. Pooja Verma,EEE-CLASSROOM-301,50
+E211,Thu,08:00,09:00,ECE,5,A,ECE5-AWP,Antenna & Wave Propagation,theory,F018,Prof. Deepak Shenoy,EEE-CLASSROOM-301,50
+E212,Thu,09:00,10:00,ECE,5,A,ECE5-VLSI,VLSI Design,theory,F018,Prof. Deepak Shenoy,EEE-CLASSROOM-301,50
+E213,Thu,10:00,11:00,ECE,5,A,ECE5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,EEE-CLASSROOM-301,50
+E214,Thu,11:15,12:15,ECE,5,A,ECE5-AC,Analog Communication,theory,F017,Dr. Pooja Verma,ECE-CLASSROOM-201,50
+E215,Thu,12:15,13:15,ECE,5,A,ECE5-CTRL,Control Systems,theory,F018,Prof. Deepak Shenoy,ECE-CLASSROOM-201,50
+E216,Thu,16:00,17:00,ECE,5,A,ECE5-MPMC,Microprocessors & Microcontrollers,theory,F017,Dr. Pooja Verma,EEE-CLASSROOM-301,50
+E217,Fri,09:00,10:00,ECE,5,A,ECE5-AWP,Antenna & Wave Propagation,theory,F018,Prof. Deepak Shenoy,EEE-CLASSROOM-301,50
+E218,Fri,10:00,11:00,ECE,5,A,ECE5-VLSI,VLSI Design,theory,F018,Prof. Deepak Shenoy,EEE-CLASSROOM-301,50
+E219,Fri,11:15,12:15,ECE,5,A,ECE5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,EEE-CLASSROOM-301,50
+E220,Fri,12:15,13:15,ECE,5,A,ECE5-AC,Analog Communication,theory,F017,Dr. Pooja Verma,EEE-CLASSROOM-301,50
+E221,Fri,14:00,15:00,ECE,5,A,ECE5-CTRL,Control Systems,theory,F018,Prof. Deepak Shenoy,EEE-CLASSROOM-301,50
+E222,Mon,09:00,10:00,Robotics & Automation,5,A,ROB5-AI4R,AI for Robotics,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E223,Mon,10:00,11:00,Robotics & Automation,5,A,ROB5-EMB,Embedded Systems,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E224,Mon,11:15,12:15,Robotics & Automation,5,A,ROB5-CTRL,Control Systems for Robotics,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E225,Mon,12:15,13:15,Robotics & Automation,5,A,ROB5-PROJ,Mini Project,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E226,Mon,14:00,15:00,Robotics & Automation,5,A,ROB5-AI4R,AI for Robotics,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E227,Tue,08:00,09:00,Robotics & Automation,5,A,ROB5-EMB,Embedded Systems,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E228,Tue,09:00,10:00,Robotics & Automation,5,A,ROB5-CTRL,Control Systems for Robotics,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E229,Tue,10:00,11:00,Robotics & Automation,5,A,ROB5-PROJ,Mini Project,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E230,Tue,11:15,12:15,Robotics & Automation,5,A,ROB5-AI4R,AI for Robotics,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E231,Tue,12:15,13:15,Robotics & Automation,5,A,ROB5-EMB,Embedded Systems,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E232,Tue,14:00,15:00,Robotics & Automation,5,A,ROB5-CTRL,Control Systems for Robotics,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E233,Tue,15:00,16:00,Robotics & Automation,5,A,ROB5-PROJ,Mini Project,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E234,Wed,10:00,11:00,Robotics & Automation,5,A,ROB5-AI4R,AI for Robotics,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E235,Wed,14:00,15:00,Robotics & Automation,5,A,ROB5-EMB,Embedded Systems,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E236,Wed,15:00,16:00,Robotics & Automation,5,A,ROB5-CTRL,Control Systems for Robotics,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E237,Wed,16:00,17:00,Robotics & Automation,5,A,ROB5-PROJ,Mini Project,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E238,Thu,08:00,09:00,Robotics & Automation,5,A,ROB5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,MECH-CLASSROOM-401,28
+E239,Thu,09:00,10:00,Robotics & Automation,5,A,ROB5-AI4R,AI for Robotics,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E240,Thu,10:00,11:00,Robotics & Automation,5,A,ROB5-EMB,Embedded Systems,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E241,Thu,11:15,12:15,Robotics & Automation,5,A,ROB5-CTRL,Control Systems for Robotics,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E242,Thu,12:15,13:15,Robotics & Automation,5,A,ROB5-PROJ,Mini Project,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E243,Thu,14:00,15:00,Robotics & Automation,5,A,ROB5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,MECH-CLASSROOM-401,28
+E244,Thu,15:00,16:00,Robotics & Automation,5,A,ROB5-AI4R,AI for Robotics,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E245,Thu,16:00,17:00,Robotics & Automation,5,A,ROB5-EMB,Embedded Systems,theory,F021,Dr. Anjali Kapoor,MECH-CLASSROOM-401,28
+E246,Fri,09:00,10:00,Robotics & Automation,5,A,ROB5-CTRL,Control Systems for Robotics,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E247,Fri,10:00,11:00,Robotics & Automation,5,A,ROB5-PROJ,Mini Project,theory,F022,Prof. Vishal Menon,MECH-CLASSROOM-401,28
+E248,Fri,14:00,15:00,Robotics & Automation,5,A,ROB5-PE,Professional Ethics,theory,F025,Dr. Farah Sheikh,MECH-CLASSROOM-401,28

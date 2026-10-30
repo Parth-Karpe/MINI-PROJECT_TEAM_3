@@ -1,0 +1,31 @@
+room_id,name,type,capacity,building,exclusive_use
+CS-LAB-1,Programming Lab 1,lab,60,Block-A (CSE),yes
+CS-LAB-2,AI/ML GPU Lab,lab,30,Block-A (CSE),yes
+CS-CLASSROOM-101,Classroom 101,classroom,70,Block-A (CSE),yes
+CS-CLASSROOM-102,Classroom 102,classroom,70,Block-A (CSE),yes
+CS-SEMINAR-HALL,CSE Seminar Hall,seminar_hall,120,Block-A (CSE),no
+ECE-LAB-1,Electronics Lab,lab,40,Block-B (ECE),yes
+ECE-LAB-2,Communication Systems Lab,lab,30,Block-B (ECE),yes
+ECE-CLASSROOM-201,Classroom 201,classroom,65,Block-B (ECE),yes
+EEE-LAB-1,EEE Lab 1,lab,35,EEE Block,yes
+EEE-LAB-2,EEE Lab 2,lab,30,EEE Block,yes
+EEE-CLASSROOM-301,Classroom 301,classroom,65,EEE Block,yes
+MECH-WORKSHOP,Mechanical Workshop,workshop,50,Mechanical Block,yes
+MECH-LAB-MATERIALS,Materials Lab,lab,25,Mechanical Block,yes
+MECH-LAB-THERMO,Thermodynamics Lab,lab,25,Mechanical Block,yes
+MECH-LAB-FLUID,Fluid Mechanics Lab,lab,25,Mechanical Block,yes
+MECH-CLASSROOM-401,Classroom 401,classroom,65,Mechanical Block,yes
+CIVIL-LAB-STRUCT,Structural Lab,lab,25,Civil Block,yes
+CIVIL-LAB-SURVEY,Surveying Lab,lab,30,Civil Block,yes
+CIVIL-LAB-SOIL,Soil Mechanics Lab,lab,20,Civil Block,yes
+CIVIL-CLASSROOM-501,Classroom 501,classroom,60,Civil Block,yes
+PHY-LAB,Physics Lab,lab,40,Common/Shared Facilities,yes
+CHEM-LAB,Chemistry Lab,lab,40,Common/Shared Facilities,yes
+MAIN-AUDITORIUM,Main Auditorium,auditorium,500,Common/Shared Facilities,no
+SEMINAR-HALL-1,Seminar Hall 1,seminar_hall,150,Common/Shared Facilities,no
+LIBRARY-HALL,Library Hall,hall,200,Common/Shared Facilities,no
+EQ-PORTABLE-ARDUINO,Arduino Kits (pool),equipment_pool,40,Portable Pool,no
+EQ-PORTABLE-RPI,Raspberry Pi Kits (pool),equipment_pool,25,Portable Pool,no
+EQ-PORTABLE-MULTIMETER,Multimeters (pool),equipment_pool,30,Portable Pool,no
+EQ-PORTABLE-LAPTOP,Laptops (pool),equipment_pool,15,Portable Pool,no
+EQ-PORTABLE-PROJECTOR,Projectors (pool),equipment_pool,6,Portable Pool,no

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Campus Resource Engine</title>
+<style>
+:root{--bg:#0B1220;--panel:#121B2E;--p2:#17233A;--bd:#26324A;--tx:#DCE4F0;--mu:#7C8AA8;--ok:#34C77B;--warn:#E8B34A;--bad:#F0665A;--ac:#4FD1C5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+code,input,select,textarea,.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+.app{display:grid;grid-template-columns:200px 1fr;min-height:100vh}
+nav{background:var(--panel);border-right:1px solid var(--bd);padding:18px 12px;position:sticky;top:0;height:100vh}
+nav h1{font-size:14px;margin:0 8px 2px}nav small{display:block;color:var(--mu);margin:0 8px 16px;font-size:11px}
+nav a{display:block;padding:9px 10px;border-radius:5px;color:var(--mu);text-decoration:none;margin-bottom:2px}
+nav a:hover{background:var(--p2);color:var(--tx)}nav a.on{background:var(--p2);color:var(--ac);font-weight:600}
+main{padding:22px;min-width:0;max-width:1300px}
+.view{display:none}.view.on{display:block}
+h2{font-size:20px;margin:0 0 4px}.sub{color:var(--mu);margin:0 0 18px}
+h3{font-size:13px;margin:0 0 10px;color:var(--mu);text-transform:uppercase;letter-spacing:.04em}
+.card{background:var(--panel);border:1px solid var(--bd);border-radius:8px;padding:16px;margin-bottom:16px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.stats{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:16px}
+.stat{background:var(--panel);border:1px solid var(--bd);border-radius:8px;padding:12px 14px}.stat b{display:block;font-size:24px}.stat span{color:var(--mu);font-size:12px}
+label{display:block;font-size:11px;color:var(--mu);margin-bottom:2px}
+input,select,textarea{width:100%;background:var(--p2);border:1px solid var(--bd);color:var(--tx);border-radius:5px;padding:7px 9px;font-size:13px}
+input:focus,select:focus{outline:1px solid var(--ac)}
+.f{display:grid;gap:10px}.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.r3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bar{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px}.bar>div{min-width:130px}
+button{background:var(--ac);color:#06231F;border:0;border-radius:5px;padding:8px 14px;font-weight:600;cursor:pointer;font-size:13px}
+button:hover{filter:brightness(1.1)}button.sec{background:transparent;border:1px solid var(--bd);color:var(--tx);font-weight:500}button.danger{background:var(--bad);color:#2A0A08}
+button:disabled{opacity:.4;cursor:not-allowed}
+.msg{font-size:12px;margin-top:8px;color:var(--mu);word-break:break-word}.msg.ok{color:var(--ok)}.msg.err{color:var(--bad)}
+.drop{display:block;border:2px dashed var(--bd);border-radius:8px;padding:22px;text-align:center;color:var(--mu);cursor:pointer}
+.drop:hover,.drop.over{border-color:var(--ac);color:var(--tx);background:var(--p2)}.drop b{color:var(--ac)}.drop .fn{display:block;margin-top:6px;color:var(--ok);font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}th{text-align:left;color:var(--mu);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--panel)}
+td{padding:6px 8px;border-bottom:1px solid var(--bd)}.scroll{max-height:420px;overflow:auto}
+.tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;padding:1px 7px;border-radius:3px;margin-right:6px}
+.hard_conflict{background:var(--bad);color:#2A0A08}.capacity{background:var(--warn);color:#2A1E05}.load_balance{background:var(--ac);color:#06231F}.advisory{background:var(--mu);color:#06231F}
+.flaw{padding:9px 0;border-bottom:1px solid var(--bd);font-size:12.5px}.flaw .sg{color:var(--ok);margin-top:3px}
+.steps{display:grid;gap:8px}.step{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--bd);border-radius:6px;color:inherit;text-decoration:none}
+.step i{width:22px;height:22px;border-radius:50%;border:1px solid var(--bd);display:grid;place-items:center;font-style:normal;font-size:12px;color:var(--mu)}.step.done i{background:var(--ok);border-color:var(--ok);color:#06231F}
+.empty{color:var(--mu);padding:12px 0;font-size:13px}.legend{display:flex;gap:16px;font-size:11px;color:var(--mu);margin-top:10px;flex-wrap:wrap}.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+/* timeline: fixed hourly axis, equal-width hours */
+.gw{overflow-x:auto;border:1px solid var(--bd);border-radius:6px}
+.g{--n:9;--hw:88px;min-width:calc(170px + var(--n)*var(--hw))}
+.g-h,.g-row{display:grid;grid-template-columns:170px 1fr}
+.g-h{position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:1px solid var(--bd)}
+.g-ax{display:grid;grid-template-columns:repeat(var(--n),1fr)}.g-ax span{font-size:11px;color:var(--mu);padding:6px 4px;border-left:1px solid var(--bd)}
+.g-row{border-bottom:1px solid var(--bd)}.g-lab{padding:8px 10px;position:sticky;left:0;background:var(--panel);z-index:1;border-right:1px solid var(--bd)}.g-lab b{display:block;font-size:12px}.g-lab small{color:var(--mu);font-size:11px}
+.g-tr{position:relative;background-image:linear-gradient(to right,var(--bd) 1px,transparent 1px);background-size:calc(100%/var(--n)) 100%}
+.gb{position:absolute;height:34px;border-radius:4px;padding:2px 6px;overflow:hidden;white-space:nowrap;color:#06231F;font-size:11px;line-height:15px;border:1px solid rgba(0,0,0,.25)}
+.gb b{display:block;overflow:hidden;text-overflow:ellipsis}.gb i{display:block;font-style:normal;opacity:.8;overflow:hidden;text-overflow:ellipsis}
+.gb.tt{background:var(--ac)}.gb.ok{background:var(--ok)}.gb.pend{background:var(--warn)}
+.gb button{position:absolute;right:2px;top:2px;padding:0 5px;font-size:10px;background:rgba(0,0,0,.3);color:#fff}
+.now{position:absolute;top:0;bottom:0;width:2px;background:var(--bad);z-index:1}
+@media(max-width:800px){.app{grid-template-columns:1fr}nav{position:static;height:auto;display:flex;overflow-x:auto;padding:8px}nav h1,nav small{display:none}nav a{white-space:nowrap}}
+</style>
+</head>
+<body>
+<div class="app">
+<nav>
+  <h1>Smart Campus</h1><small>Resource Engine</small>
+  <a href="#overview" data-v="overview">Overview</a>
+  <a href="#resources" data-v="resources">Resources</a>
+  <a href="#timetable" data-v="timetable">Timetable</a>
+  <a href="#schedule" data-v="schedule">Schedule</a>
+  <a href="#bookings" data-v="bookings">Bookings</a>
+  <a href="#admin" data-v="admin">Admin</a>
+</nav>
+<main>
+
+<!-- OVERVIEW -->
+<section class="view" id="v-overview">
+  <h2>Overview</h2><p class="sub">What's set up and what needs attention.</p>
+  <div class="stats" id="stats"></div>
+  <div class="card"><h3>Getting started</h3><div class="steps" id="steps"></div></div>
+</section>
+
+<!-- RESOURCES -->
+<section class="view" id="v-resources">
+  <h2>Resources</h2><p class="sub">Rooms, labs and equipment the engine can allocate.</p>
+  <div class="grid">
+    <div class="card"><h3>Import from a CSV file</h3>
+      <label class="drop" id="drop-rooms"><input type="file" accept=".csv,text/csv,text/plain" hidden><b>Choose a CSV file</b> or drop it here<span>columns: room_id, name, type, capacity, building, exclusive_use</span><span class="fn"></span></label>
+      <div class="bar" style="margin:12px 0 0"><button id="rooms-go" disabled>Import resources</button><button class="sec" id="rooms-tpl">Download template</button></div>
+      <div class="msg" id="rooms-msg"></div></div>
+    <div class="card"><h3>Add one resource</h3>
+      <form class="f" id="res-form">
+        <div class="r2"><div><label>ID</label><input name="resource_id" required placeholder="LAB-A"></div><div><label>Name</label><input name="name" required placeholder="Robotics Lab"></div></div>
+        <div class="r3"><div><label>Type</label><input name="resource_type" required placeholder="lab"></div><div><label>Capacity</label><input name="capacity" type="number" value="1" min="1" required></div><div><label>Exclusive use?</label><select name="exclusive_use"><option value="true">Yes (whole room)</option><option value="false">No (shareable)</option></select></div></div>
+        <div class="r2"><div><label>Building / location</label><input name="location"></div><div><label>Department</label><input name="department"></div></div>
+        <div><button>Add resource</button></div></form><div class="msg" id="res-msg"></div></div>
+  </div>
+  <div class="card"><div class="bar"><div><label>Search</label><input id="r-q" placeholder="ID, name, building…"></div><div><label>Type</label><select id="r-type"></select></div></div>
+    <div class="scroll" id="r-table"></div></div>
+</section>
+
+<!-- TIMETABLE -->
+<section class="view" id="v-timetable">
+  <h2>Default timetable</h2><p class="sub" id="tt-status"></p>
+  <div class="grid">
+    <div class="card"><h3>1 · Upload timetable CSV</h3>
+      <label class="drop" id="drop-tt"><input type="file" accept=".csv,text/csv,text/plain" hidden><b>Choose a CSV file</b> or drop it here<span>one branch or the whole college</span><span class="fn"></span></label>
+      <div class="bar" style="margin:12px 0 0"><button class="sec" id="tt-tpl">Download template</button></div>
+      <details style="margin-top:12px"><summary class="msg">Optional: import sections / faculty / courses reference files</summary>
+        <label class="drop" id="drop-ref" style="margin-top:8px"><input type="file" accept=".csv,text/csv" multiple hidden><b>Choose up to 3 files</b> (type is auto-detected)<span class="fn"></span></label>
+        <div class="msg" id="ref-msg"></div></details></div>
+    <div class="card"><h3>2 · Analyze (changes nothing)</h3>
+      <p class="msg" style="margin-top:0">Finds double-booked rooms, faculty and sections, over-capacity rooms, impossible travel gaps and lopsided weeks.</p>
+      <button id="an-go" disabled>Analyze timetable</button><div class="msg" id="an-msg"></div></div>
+    <div class="card"><h3>3 · Finalize</h3>
+      <div class="f"><div class="r2"><div><label>Starts Monday of week</label><input type="date" id="fn-week"></div><div><label>Weeks</label><input type="number" id="fn-weeks" value="16" min="1" max="52"></div></div>
+      <div class="r2"><div><label>Your HOD ID</label><input id="fn-actor" placeholder="hod_cse"></div><div><label>Role</label><input id="fn-role" value="hod"></div></div>
+      <div><button id="fn-go" disabled>Finalize as default timetable</button></div></div>
+      <p class="msg">Finalizing again replaces the previous default timetable.</p><div class="msg" id="fn-msg"></div></div>
+  </div>
+  <div class="card" id="an-card" hidden><h3>Analysis</h3><div id="an-out"></div></div>
+  <div class="card"><h3>Current default timetable</h3><div class="bar"><div><label>Filter</label><input id="t-q" placeholder="section, course, faculty, room…"></div></div><div class="scroll" id="t-table"></div></div>
+</section>
+
+<!-- SCHEDULE -->
+<section class="view" id="v-schedule">
+  <h2>Schedule</h2><p class="sub">Times are campus wall-clock times. Hover a block for details.</p>
+  <div class="card">
+    <div class="bar">
+      <div><label>View</label><select id="s-mode"><option value="day">All resources · one day</option><option value="week">One resource · whole week</option></select></div>
+      <div><label>Date</label><div style="display:flex;gap:4px"><button class="sec" id="s-prev">◀</button><input type="date" id="s-date"><button class="sec" id="s-next">▶</button><button class="sec" id="s-today">Today</button></div></div>
+      <div id="s-day-f" class="bar" style="margin:0"><div><label>Type</label><select id="s-type"></select></div><div><label>Search</label><input id="s-q" placeholder="room…"></div></div>
+      <div id="s-week-f" hidden><label>Resource</label><select id="s-res"></select></div>
+    </div>
+    <div id="s-range" style="font-size:15px;margin:2px 0 10px"></div>
+    <div id="gantt"></div>
+    <div class="legend"><span><i style="background:var(--ac)"></i>Default timetable</span><span><i style="background:var(--ok)"></i>Ad hoc, confirmed</span><span><i style="background:var(--warn)"></i>Pending</span></div>
+  </div>
+</section>
+
+<!-- BOOKINGS -->
+<section class="view" id="v-bookings">
+  <h2>Bookings</h2><p class="sub">Extra use of a resource outside the default timetable.</p>
+  <div class="grid">
+    <div class="card"><h3>New request</h3>
+      <form class="f" id="rq-form">
+        <div class="r2"><div><label>Request ID</label><input name="request_id" required placeholder="R1"></div><div><label>User</label><input name="user_id" required placeholder="sachi"></div></div>
+        <div><label>Resource</label><select name="resource_id" class="res-sel" required></select></div>
+        <div class="r2"><div><label>Start</label><input type="datetime-local" name="start" required></div><div><label>End</label><input type="datetime-local" name="end" required></div></div>
+        <div class="r2"><div><label>Role (sets priority)</label><select name="role"><option value="">student</option><option>faculty</option><option>hod</option></select></div><div><label>Group size</label><input type="number" name="group_size" value="1" min="1"></div></div>
+        <div><button>Submit request</button></div></form><div class="msg" id="rq-msg"></div></div>
+    <div class="card"><h3>Batch resolution</h3>
+      <p class="msg" style="margin-top:0">Pending requests are decided together once their batch window closes.</p>
+      <button class="sec" id="resolve-go">Resolve due batches now</button><div class="msg" id="resolve-msg"></div></div>
+  </div>
+  <div class="grid">
+    <div class="card" style="grid-column:1/-1"><h3>Queues by resource: each request is decided 8 hours before it starts, together with every overlapping request</h3><div id="b-pend"></div></div>
+    <div class="card"><h3>Rejected / waitlisted</h3><div class="scroll" id="b-rej"></div></div>
+  </div>
+  <div class="card"><h3>Confirmed ad hoc bookings (next 2 weeks)</h3><div class="scroll" id="b-ok"></div></div>
+</section>
+
+<!-- ADMIN -->
+<section class="view" id="v-admin">
+  <h2>Admin</h2><p class="sub">HOD-only tools and the audit trail.</p>
+  <div class="grid">
+    <div class="card"><h3>Manual override</h3>
+      <p class="msg" style="margin-top:0">Forces one booking through, clearing whatever is in the way for that single occurrence. The default timetable itself is not rewritten.</p>
+      <form class="f" id="ov-form">
+        <div class="r2"><div><label>Request ID</label><input name="request_id" required placeholder="OVR-1"></div><div><label>User</label><input name="user_id" required></div></div>
+        <div><label>Resource</label><select name="resource_id" class="res-sel" required></select></div>
+        <div class="r2"><div><label>Start</label><input type="datetime-local" name="start" required></div><div><label>End</label><input type="datetime-local" name="end" required></div></div>
+        <div class="r3"><div><label>Group size</label><input type="number" name="group_size" value="1" min="1"></div><div><label>HOD ID</label><input name="actor_id" required></div><div><label>Role</label><input name="actor_role" value="hod" required></div></div>
+        <div><label>Reason (audit-logged)</label><input name="reason" required></div>
+        <div><button class="danger">Force this booking</button></div></form><div class="msg" id="ov-msg"></div></div>
+    <div class="card"><h3>Danger zone</h3><p class="msg" style="margin-top:0">Wipes all resources, timetable, bookings and imported reference data from the running server.</p><button class="danger" id="reset-go">Reset everything</button><div class="msg" id="reset-msg"></div></div>
+  </div>
+  <div class="card"><div class="bar"><h3 style="margin:0 auto 0 0">Audit trail</h3><div><input id="a-q" placeholder="filter…"></div></div><div class="scroll" id="audit"></div></div>
+</section>
+</main></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const pad=n=>String(n).padStart(2,"0"),DAY=864e5;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+// Campus wall-clock: the timetable's "11:15" means 11:15 on the wall, so everything is sent as naive
+// local strings and read back WITHOUT timezone conversion -> a class at 11:15 always displays as 11:15.
+const wall=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+const ms=iso=>{const m=/(\d+)-(\d+)-(\d+)T(\d+):(\d+)/.exec(iso);return Date.UTC(+m[1],m[2]-1,+m[3],+m[4],+m[5])};
+const iso=t=>new Date(t).toISOString().slice(0,19);
+const hm=t=>{const d=new Date(t);return pad(d.getUTCHours())+":"+pad(d.getUTCMinutes())};
+const ymd=t=>new Date(t).toISOString().slice(0,10);
+const dayMs=v=>{const[y,m,d]=v.split("-").map(Number);return Date.UTC(y,m-1,d)};
+const dt=v=>v?v+":00":null;
+const todayMs=()=>{const n=new Date();return Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())};
+const nowWall=()=>wall(new Date());
+async function api(p,o){const r=await fetch(p,o);const b=await r.json().catch(()=>({}));if(!r.ok)throw new Error(typeof b.detail==="string"?b.detail:JSON.stringify(b.detail||r.statusText));return b}
+const post=(p,b)=>api(p,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});
+function say(sel,t,k){const e=$(sel);e.textContent=t;e.className="msg "+(k||"")}
+
+const S={res:[],acc:[],pend:[],rej:[],tt:{finalized:false,entries:[]},ttMap:{},meta:{locked:0},analyzed:null,view:"overview"};
+const F={}; // uploaded files: key -> {name,text}
+
+// ---------- CSV file picking (device -> browser -> API; works with the file dialog or drag & drop)
+const heads=t=>(t.replace(/^\uFEFF/,"").split(/\r?\n/)[0]||"").split(",").map(x=>x.trim().toLowerCase().replace(/ /g,"_"));
+const nrows=t=>Math.max(0,t.replace(/^\uFEFF/,"").trim().split(/\r?\n/).length-1);
+function wireDrop(sel,key,need,done){
+  const L=$(sel),inp=L.querySelector("input"),fn=L.querySelector(".fn");
+  async function take(files){
+    if(!files.length)return;
+    const out=[];for(const f of files)out.push({name:f.name,text:await f.text()});
+    if(inp.multiple){F[key]=out;fn.textContent=out.map(o=>o.name).join(", ")}
+    else{const o=out[0],h=heads(o.text),miss=(need||[]).filter(c=>!h.includes(c));
+      if(miss.length){fn.style.color="var(--bad)";fn.textContent=`${o.name}: missing column(s) ${miss.join(", ")}`;F[key]=null}
+      else{fn.style.color="";fn.textContent=`${o.name} — ${nrows(o.text)} rows`;F[key]=o}}
+    done&&done();
+  }
+  inp.addEventListener("change",()=>take([...inp.files]));
+  ["dragenter","dragover"].forEach(e=>L.addEventListener(e,ev=>{ev.preventDefault();L.classList.add("over")}));
+  ["dragleave","drop"].forEach(e=>L.addEventListener(e,ev=>{ev.preventDefault();L.classList.remove("over")}));
+  L.addEventListener("drop",ev=>take([...ev.dataTransfer.files]));
+}
+function download(name,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/csv"}));a.download=name;a.click()}
+
+// ---------- routing
+const VIEWS=["overview","resources","timetable","schedule","bookings","admin"];
+function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"overview";S.view=v;
+  $$(".view").forEach(e=>e.classList.toggle("on",e.id==="v-"+v));$$("nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));refresh()}
+addEventListener("hashchange",route);
+
+// ---------- data
+function window_(){ // date range the current page needs
+  const t=todayMs();
+  if(S.view==="schedule"){const d=dayMs($("#s-date").value||ymd(t));
+    if($("#s-mode").value==="week"){const mon=d-((new Date(d).getUTCDay()+6)%7)*DAY;return[mon,mon+7*DAY]}return[d,d+DAY]}
+  if(S.view==="bookings"||S.view==="admin")return[t-DAY,t+14*DAY];
+  return[t,t+DAY];
+}
+async function refresh(){
+  const[a,b]=window_();
+  try{await post("/admin/resolve",{now:nowWall()})}catch(e){}
+  try{const st=await api(`/admin/state?window_start=${iso(a)}&window_end=${iso(b)}&now=${nowWall()}`);
+    S.res=st.resources;S.acc=st.accepted;S.pend=st.pending;S.rej=st.rejected;S.meta.locked=st.timetable_locked_count}
+  catch(e){S.res=[];S.acc=[];S.pend=[];S.rej=[]}
+  try{S.tt=await api("/timetable");S.ttMap=Object.fromEntries(S.tt.entries.map(e=>[e.entry_id,e]))}catch(e){}
+  render();
+}
+function render(){
+  fillSelects();
+  ({overview:rOverview,resources:rResources,timetable:rTimetable,schedule:rSchedule,bookings:rBookings,admin:rAdmin})[S.view]();
+}
+function fillSelects(){
+  const opts=S.res.map(r=>`<option value="${esc(r.resource_id)}">${esc(r.resource_id)} (${esc(r.resource_type)}, cap ${r.capacity})</option>`).join("");
+  $$(".res-sel").forEach(s=>{const c=s.value;s.innerHTML=opts;if(c)s.value=c});
+  const types=[...new Set(S.res.map(r=>r.resource_type))].sort();
+  for(const id of["#r-type","#s-type"]){const s=$(id),c=s.value;s.innerHTML='<option value="">All types</option>'+types.map(t=>`<option>${esc(t)}</option>`).join("");s.value=c}
+  const s=$("#s-res"),c=s.value;s.innerHTML=opts;if(c)s.value=c;
+}
+
+// ---------- overview
+function rOverview(){
+  const t=todayMs(),ttNow=S.acc.filter(a=>a.is_timetable).length,adhoc=S.acc.length-ttNow;
+  $("#stats").innerHTML=[[S.res.length,"resources"],[S.tt.finalized?S.tt.template_row_count:"—","classes / week"],[ttNow,"classes today"],[adhoc,"ad hoc today"],[S.pend.length,"pending"],[S.rej.length,"rejected / waitlisted"]]
+    .map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join("");
+  const st=[[S.res.length>0,"Add your resources","Import rooms.csv or add them one by one","#resources"],
+    [!!S.analyzed||S.tt.finalized,"Upload and analyze the timetable","Catch conflicts and overloaded days before publishing","#timetable"],
+    [S.tt.finalized,"Finalize the default timetable","Locks it in for the semester","#timetable"],
+    [S.tt.finalized,"Check the schedule","See every room hour by hour","#schedule"]];
+  $("#steps").innerHTML=st.map(([d,a,b,h],i)=>`<a class="step ${d?"done":""}" href="${h}"><i>${d?"✓":i+1}</i><div><b>${a}</b><div class="msg" style="margin:0">${b}</div></div></a>`).join("");
+}
+
+// ---------- resources
+function rResources(){
+  const q=$("#r-q").value.toLowerCase(),ty=$("#r-type").value;
+  const rows=S.res.filter(r=>(!ty||r.resource_type===ty)&&(!q||(r.resource_id+r.name+(r.location||"")).toLowerCase().includes(q)));
+  $("#r-table").innerHTML=rows.length?`<table><tr><th>ID</th><th>Name</th><th>Type</th><th>Capacity</th><th>Building</th><th>Use</th></tr>${rows.map(r=>`<tr><td class="mono">${esc(r.resource_id)}</td><td>${esc(r.name)}</td><td>${esc(r.resource_type)}</td><td>${r.capacity}</td><td>${esc(r.location)}</td><td>${r.exclusive_use===false?"shared":"exclusive"}</td></tr>`).join("")}</table>`:'<div class="empty">No resources match.</div>';
+}
+
+// ---------- timetable
+function rTimetable(){
+  const t=S.tt;$("#tt-status").textContent=t.finalized?`Finalized: ${t.template_row_count} classes/week, ${t.horizon?ymd(ms(t.horizon.start))+" → "+ymd(ms(t.horizon.end))+" ("+t.horizon.weeks+" weeks)":""}`:"Not finalized yet.";
+  const q=$("#t-q").value.toLowerCase(),rows=t.entries.filter(e=>!q||Object.values(e).join(" ").toLowerCase().includes(q)).slice(0,300);
+  $("#t-table").innerHTML=rows.length?`<table><tr><th>Day</th><th>Time</th><th>Section</th><th>Course</th><th>Faculty</th><th>Room</th></tr>${rows.map(e=>`<tr><td>${esc(e.day)}</td><td class="mono">${esc(e.start_time)}–${esc(e.end_time)}</td><td>${esc(e.section_id)}</td><td>${esc(e.course_code)}</td><td>${esc(e.faculty_name)}</td><td class="mono">${esc(e.resource_id)}</td></tr>`).join("")}</table>`:'<div class="empty">Nothing finalized yet.</div>';
+  const ok=!!F.tt;$("#an-go").disabled=!ok;$("#fn-go").disabled=!ok;
+}
+function showFlaws(r){
+  $("#an-card").hidden=false;
+  const c=k=>r.flaws.filter(f=>f.severity===k).length;
+  $("#an-out").innerHTML=`<p style="margin-top:0"><b style="color:var(--${r.clean?"ok":"bad"})">${esc(r.summary)}</b></p>`+
+   (r.flaws.length?r.flaws.map(f=>`<div class="flaw"><span class="tag ${f.severity}">${esc(f.kind.replace(/_/g," "))}</span>${esc(f.message)}${f.suggestion?`<div class="sg">→ ${esc(f.suggestion)}</div>`:""}</div>`).join(""):'<div class="empty">No findings.</div>');
+}
+$("#an-go").onclick=async()=>{try{say("#an-msg","Analyzing…");const r=await post("/timetable/analyze",{csv_text:F.tt.text});S.analyzed=r;showFlaws(r);say("#an-msg",`${r.flaw_count} finding(s) across ${r.entries_analyzed} sessions. Nothing was changed.`,r.clean?"ok":"err")}catch(e){say("#an-msg",e.message,"err")}};
+$("#fn-go").onclick=async()=>{
+  const w=$("#fn-week").value;if(!w)return say("#fn-msg","Pick the Monday to start from.","err");
+  if(!S.analyzed&&!confirm("You haven't analyzed this timetable yet. Finalize anyway?"))return;
+  if(S.analyzed&&!S.analyzed.clean&&!confirm("The analysis found hard conflicts. Conflicting classes will be rejected in every week. Finalize anyway?"))return;
+  try{const r=await post("/timetable/finalize",{csv_text:F.tt.text,actor_id:$("#fn-actor").value,actor_role:$("#fn-role").value||"hod",week_start:dt(w+"T00:00"),weeks:+$("#fn-weeks").value||16});
+    say("#fn-msg",`Finalized: ${r.confirmed} occurrences confirmed, ${r.rejected.length} rejected${r.replaced_occurrences?`, replaced ${r.replaced_occurrences} from the previous timetable`:""}.`,r.rejected.length?"err":"ok");refresh()}catch(e){say("#fn-msg",e.message,"err")}};
+$("#t-q").oninput=rTimetable;
+const TT_TPL="entry_id,day,start_time,end_time,branch,semester,section,course_code,course_name,session_type,faculty_id,faculty_name,room_id,expected_students\nE001,Mon,09:00,10:00,CSE,3,A,CSE3-DS,Data Structures,theory,F001,Dr. Rao,CS-CLASSROOM-101,60\n";
+const RM_TPL="room_id,name,type,capacity,building,exclusive_use\nCS-LAB-1,Programming Lab 1,lab,60,Block-A,yes\n";
+$("#tt-tpl").onclick=()=>download("timetable_template.csv",TT_TPL);$("#rooms-tpl").onclick=()=>download("rooms_template.csv",RM_TPL);
+wireDrop("#drop-tt","tt",["day","start_time","end_time","room_id"],()=>{S.analyzed=null;$("#an-card").hidden=true;say("#an-msg","");rTimetable()});
+wireDrop("#drop-rooms","rooms",["room_id"],()=>{$("#rooms-go").disabled=!F.rooms});
+wireDrop("#drop-ref","ref",null,async()=>{const b={};for(const f of F.ref){const h=heads(f.text);
+  if(h.includes("section_id"))b.sections_csv=f.text;else if(h.includes("faculty_id"))b.faculty_csv=f.text;else if(h.includes("course_code")&&h.includes("weekly_sessions"))b.courses_csv=f.text}
+  try{const r=await post("/import/reference",b);say("#ref-msg",`Imported: ${r.sections} sections, ${r.faculty} faculty, ${r.courses} courses.`,"ok")}catch(e){say("#ref-msg",e.message,"err")}});
+$("#rooms-go").onclick=async()=>{try{const r=await post("/import/rooms",{csv_text:F.rooms.text});say("#rooms-msg",`Imported. ${r.resource_count} resources registered in total.`,"ok");refresh()}catch(e){say("#rooms-msg",e.message,"err")}};
+$("#res-form").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);
+  try{const r=await post("/resources",[{resource_id:f.get("resource_id"),name:f.get("name"),resource_type:f.get("resource_type"),capacity:+f.get("capacity"),location:f.get("location")||"",department:f.get("department")||"",exclusive_use:f.get("exclusive_use")==="true"}]);
+    say("#res-msg",`Added. ${r.resource_count} resources total.`,"ok");e.target.reset();refresh()}catch(er){say("#res-msg",er.message,"err")}};
+$("#r-q").oninput=rResources;$("#r-type").onchange=rResources;
+
+// ---------- schedule (timeline)
+let AX=[8,17];
+function gantt(rows){
+  // axis = campus day 08–17, widened only if something falls outside it
+  let lo=8,hi=17;
+  for(const r of rows)for(const it of r.items){lo=Math.min(lo,Math.floor((it.s-r.d0)/36e5));hi=Math.max(hi,Math.ceil((it.e-r.d0)/36e5))}
+  lo=Math.max(0,lo);hi=Math.min(24,hi);const N=hi-lo;AX=[lo,hi];
+  let h=`<div class="gw"><div class="g" style="--n:${N}"><div class="g-h"><div></div><div class="g-ax">${Array.from({length:N},(_,i)=>`<span>${pad(lo+i)}:00</span>`).join("")}</div></div>`;
+  const nowMs=Date.UTC(...(d=>[d.getFullYear(),d.getMonth(),d.getDate(),d.getHours(),d.getMinutes()])(new Date()));
+  for(const r of rows){
+    const lanes=[];r.items.sort((a,b)=>a.s-b.s);
+    for(const it of r.items){let l=lanes.findIndex(x=>x<=it.s);if(l<0){l=lanes.length;lanes.push(0)}lanes[l]=it.e;it.lane=l}
+    const H=Math.max(1,lanes.length)*38+6;
+    const blocks=r.items.map(it=>`<div class="gb ${it.cls}" style="left:${((it.s-r.d0)/36e5-lo)/N*100}%;width:${(it.e-it.s)/36e5/N*100}%;top:${3+it.lane*38}px" title="${esc(it.tip)}"><b>${esc(it.l1)}</b><i>${hm(it.s)}–${hm(it.e)}</i>${it.cancel?`<button data-cancel="${esc(it.cancel)}">✕</button>`:""}</div>`).join("");
+    const nl=nowMs>=r.d0&&nowMs<r.d0+DAY&&(nowMs-r.d0)/36e5>=lo&&(nowMs-r.d0)/36e5<hi?`<div class="now" style="left:${((nowMs-r.d0)/36e5-lo)/N*100}%"></div>`:"";
+    h+=`<div class="g-row"><div class="g-lab"><b>${esc(r.l1)}</b><small>${esc(r.l2)}</small></div><div class="g-tr" style="height:${H}px">${nl}${blocks}</div></div>`;
+  }
+  return h+"</div></div>";
+}
+function items(rid){
+  const out=[];
+  for(const a of S.acc){if(a.resource_id!==rid)continue;const s=ms(a.start),e=ms(a.end),m=a.is_timetable&&S.ttMap[a.request_id.split("#")[0]];
+    out.push(m?{s,e,cls:"tt",l1:m.course_code,l2:m.section_id,tip:`${m.course_name} (${m.course_code})\n${m.section_id} · ${m.faculty_name}\n${m.day} ${m.start_time}–${m.end_time} · ${rid}`}
+      :{s,e,cls:"ok",l1:a.request_id,l2:a.user_id,cancel:a.is_timetable?"":a.request_id,tip:`${a.request_id} by ${a.user_id}\n${hm(s)}–${hm(e)} · ${rid}`})}
+  for(const p of S.pend){if(p.resource_id!==rid)continue;const s=ms(p.start),e=ms(p.end);out.push({s,e,cls:"pend",l1:p.request_id+" (pending)",l2:p.user_id,tip:`Pending ${p.request_id} by ${p.user_id}`})}
+  return out;
+}
+function rSchedule(){
+  if(!S.res.length)return $("#gantt").innerHTML='<div class="empty">No resources yet — import them on the Resources page.</div>';
+  const week=$("#s-mode").value==="week";$("#s-day-f").hidden=week;$("#s-week-f").hidden=!week;
+  const d=dayMs($("#s-date").value||ymd(todayMs()));let rows;
+  if(week){const rid=$("#s-res").value||S.res[0].resource_id,mon=d-((new Date(d).getUTCDay()+6)%7)*DAY,all=items(rid);
+    rows=Array.from({length:6},(_,i)=>{const d0=mon+i*DAY;return{d0,l1:new Date(d0).toUTCString().slice(0,11),l2:rid,items:all.filter(x=>x.s>=d0&&x.s<d0+DAY)}})}
+  else{const q=$("#s-q").value.toLowerCase(),ty=$("#s-type").value;
+    rows=S.res.filter(r=>(!ty||r.resource_type===ty)&&(!q||(r.resource_id+r.name).toLowerCase().includes(q))).sort((a,b)=>a.resource_id.localeCompare(b.resource_id))
+      .map(r=>({d0:d,l1:r.resource_id,l2:`${r.resource_type} · cap ${r.capacity}`,items:items(r.resource_id).filter(x=>x.s>=d&&x.s<d+DAY)}))}
+  $("#gantt").innerHTML=rows.length?gantt(rows):'<div class="empty">No resources match.</div>';
+  const fd=t=>new Date(t).toUTCString().slice(0,16),ax=`${pad(AX[0])}:00 → ${pad(AX[1])}:00`;
+  $("#s-range").innerHTML=!rows.length?"":week?`<b>From</b> ${fd(rows[0].d0)} <b>to</b> ${fd(rows[5].d0)} · ${ax}`:`<b>${fd(d)}</b> · ${ax}`;
+}
+$("#s-date").value=ymd(todayMs());
+for(const id of["#s-mode","#s-date","#s-res"])$(id).onchange=refresh;
+for(const id of["#s-type","#s-q"])$(id).oninput=rSchedule;
+const shift=n=>{const d=dayMs($("#s-date").value)+n*($("#s-mode").value==="week"?7:1)*DAY;$("#s-date").value=ymd(d);refresh()};
+$("#s-prev").onclick=()=>shift(-1);$("#s-next").onclick=()=>shift(1);$("#s-today").onclick=()=>{$("#s-date").value=ymd(todayMs());refresh()};
+document.addEventListener("click",async e=>{const id=e.target.dataset&&e.target.dataset.cancel;if(!id)return;
+  if(!confirm(`Cancel booking ${id}?`))return;try{await post("/cancel",{request_id:id,now:nowWall()});refresh()}catch(er){alert(er.message)}});
+
+// ---------- bookings
+const fmt=iso=>{const t=ms(iso);return ymd(t).slice(5)+" "+hm(t)};
+function rBookings(){
+  const adhoc=S.acc.filter(a=>!a.is_timetable);
+  const byR={};S.pend.forEach(p=>(byR[p.resource_id]=byR[p.resource_id]||[]).push(p));
+  $("#b-pend").innerHTML=Object.keys(byR).length?Object.keys(byR).sort().map(rid=>{const L=byR[rid].sort((x,y)=>y.score-x.score);
+    return `<div style="margin-bottom:14px"><b class="mono">${esc(rid)}</b> <span class="msg">${L.length} waiting</span><table><tr><th>Rank</th><th>Request</th><th>User</th><th>Wants</th><th>Decided at</th><th>Score</th></tr>${L.map((p,i)=>`<tr><td>${i+1}</td><td>${esc(p.request_id)}</td><td>${esc(p.user_id)} <span class="msg">${esc(p.role||"student")}, group ${p.group_size||1}</span></td><td>${fmt(p.start)}–${hm(ms(p.end))}</td><td>${fmt(p.decide_at)}</td><td>${p.score}</td></tr>`).join("")}</table></div>`}).join(""):'<div class="empty">No requests waiting.</div>';
+  $("#b-rej").innerHTML=S.rej.length?`<table><tr><th>ID</th><th>User</th><th>Resource</th><th>When</th><th>Why</th></tr>${[...S.rej].sort((a,b)=>b.priority-a.priority).map(r=>`<tr><td>${esc(r.request_id)}</td><td>${esc(r.user_id)}</td><td class="mono">${esc(r.resource_id)}</td><td>${fmt(r.start)}–${hm(ms(r.end))}</td><td class="msg">${esc(r.reason)}</td></tr>`).join("")}</table>`:'<div class="empty">Nobody rejected or waitlisted.</div>';
+  $("#b-ok").innerHTML=adhoc.length?`<table><tr><th>ID</th><th>User</th><th>Resource</th><th>When</th><th></th></tr>${adhoc.map(a=>`<tr><td>${esc(a.request_id)}</td><td>${esc(a.user_id)}</td><td class="mono">${esc(a.resource_id)}</td><td>${fmt(a.start)}–${hm(ms(a.end))}</td><td><button class="sec" data-cancel="${esc(a.request_id)}">Cancel</button></td></tr>`).join("")}</table>`:'<div class="empty">No ad hoc bookings in this range.</div>';
+  const f=$("#rq-form");if(!f.start.value){const n=new Date(todayMs()+DAY+9*36e5);const v=ymd(n)+"T09:00";f.start.value=v;f.end.value=ymd(n)+"T10:00"}
+}
+$("#rq-form").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),r=S.res.find(x=>x.resource_id===f.get("resource_id"));
+  try{const o=await post("/requests",{request_id:f.get("request_id"),user_id:f.get("user_id"),resource_id:f.get("resource_id"),resource_type:r?r.resource_type:"",start:dt(f.get("start")),end:dt(f.get("end")),role:f.get("role")||null,group_size:+f.get("group_size")||1,now:nowWall()});
+    say("#rq-msg",o.status==="pending"?`${o.request_id} is in the queue. It's decided 8 hours before it starts, together with every overlapping request.`:`${o.request_id} → ${o.status}`,o.status==="confirmed"?"ok":o.status==="rejected"?"err":"");refresh()}catch(er){say("#rq-msg",er.message,"err")}};
+$("#resolve-go").onclick=async()=>{try{const r=await post("/admin/resolve",{now:nowWall()});say("#resolve-msg",r.resolved_count?`Resolved ${r.resolved_count} request(s).`:"Nothing due yet.","ok");refresh()}catch(e){say("#resolve-msg",e.message,"err")}};
+
+// ---------- admin
+async function rAdmin(){
+  const f=$("#ov-form");if(!f.start.value){const v=ymd(todayMs()+DAY);f.start.value=v+"T09:00";f.end.value=v+"T10:00"}
+  try{const r=await api("/audit"),q=$("#a-q").value.toLowerCase();
+    const rows=r.entries.filter(e=>!q||JSON.stringify(e).toLowerCase().includes(q)).slice(0,60);
+    $("#audit").innerHTML=rows.length?`<table><tr><th>When</th><th>Event</th><th>Request</th><th>Resource</th><th>User</th><th>Details</th></tr>${rows.map(e=>`<tr><td class="mono">${e.ts?fmt(e.ts):""}</td><td>${esc(e.event_type)}</td><td>${esc(e.request_id)}</td><td class="mono">${esc(e.resource_id)}</td><td>${esc(e.user_id)}</td><td class="msg">${esc(Object.entries(e.details||{}).map(([k,v])=>k+"="+JSON.stringify(v)).join(", "))}</td></tr>`).join("")}</table>`:'<div class="empty">No activity yet.</div>';
+  }catch(e){$("#audit").innerHTML='<div class="empty">No activity yet.</div>'}
+}
+$("#a-q").oninput=rAdmin;
+$("#ov-form").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),r=S.res.find(x=>x.resource_id===f.get("resource_id"));
+  try{const o=await post("/admin/manual-override",{request_id:f.get("request_id"),user_id:f.get("user_id"),resource_id:f.get("resource_id"),resource_type:r?r.resource_type:"",start:dt(f.get("start")),end:dt(f.get("end")),role:"hod",group_size:+f.get("group_size")||1,actor_id:f.get("actor_id"),actor_role:f.get("actor_role")||"hod",reason:f.get("reason"),now:nowWall()});
+    say("#ov-msg",`${o.status}. Cleared: ${o.cleared_request_ids.length?o.cleared_request_ids.join(", "):"nothing"}.`,o.status==="confirmed"?"ok":"err");refresh()}catch(er){say("#ov-msg",er.message,"err")}};
+$("#reset-go").onclick=async()=>{if(!confirm("Reset EVERYTHING on the server? This cannot be undone."))return;try{await post("/reset",{});S.analyzed=null;say("#reset-msg","Reset.","ok");refresh()}catch(e){say("#reset-msg",e.message,"err")}};
+
+// default Monday for finalize = next Monday
+(()=>{const n=new Date();n.setDate(n.getDate()+((8-n.getDay())%7||7));$("#fn-week").value=`${n.getFullYear()}-${pad(n.getMonth()+1)}-${pad(n.getDate())}`})();
+setInterval(()=>{if(!document.hidden&&!["INPUT","SELECT","TEXTAREA"].includes(document.activeElement.tagName))refresh()},5000);
+route();
+</script>
+</body>
+</html>
