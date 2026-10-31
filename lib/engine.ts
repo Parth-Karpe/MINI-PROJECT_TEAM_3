@@ -25,6 +25,7 @@ import type {
   TimetableEntryRegistration,
   TimetableState,
 } from "@/lib/types";
+import { timetableStore } from "@/lib/timetableStore";
 
 export type AdminStateQuery = {
   window_start?: string;
@@ -100,14 +101,23 @@ export const EMPTY_TIMETABLE: TimetableState = {
 
 // ---- admin state / resources / timetable -----------------------------------
 
-export function getAdminState(query: AdminStateQuery = {}) {
-  return forwardToEngine<EngineState>("/admin/state", {
+export async function getAdminState(query: AdminStateQuery = {}) {
+  const res = await forwardToEngine<EngineState>("/admin/state", {
     query: toQuery({ ...query }),
   });
+  if (res.status === 503) {
+    return { status: 200, data: timetableStore.getAdminState() as unknown as EngineState };
+  }
+  return res;
 }
 
-export function getEngineResources(): Promise<{ status: number; data: { resources: Resource[] } }> {
-  return forwardToEngine<{ resources: Resource[] }>("/resources");
+export async function getEngineResources(): Promise<{ status: number; data: { resources: Resource[] } }> {
+  const res = await forwardToEngine<{ resources: Resource[] }>("/resources");
+  if (res.status === 503) {
+    const adminState = timetableStore.getAdminState();
+    return { status: 200, data: { resources: adminState.resources } };
+  }
+  return res;
 }
 
 export function registerResources(resources: ResourceRegistration[]) {
@@ -150,8 +160,12 @@ export function submitTimetable(entries: TimetableEntryRegistration[], now?: str
   });
 }
 
-export function getTimetable() {
-  return forwardToEngine<TimetableState>("/timetable");
+export async function getTimetable() {
+  const res = await forwardToEngine<TimetableState>("/timetable");
+  if (res.status === 503) {
+    return { status: 200, data: timetableStore.getTimetableState() as unknown as TimetableState };
+  }
+  return res;
 }
 
 export function analyzeTimetable(csv_text: string) {
@@ -218,11 +232,15 @@ export function submitRequest(body: Record<string, unknown>, idempotency_key?: s
   });
 }
 
-export function resolveDue(now?: string) {
-  return forwardToEngine<Record<string, unknown>>("/admin/resolve", {
+export async function resolveDue(now?: string) {
+  const res = await forwardToEngine<Record<string, unknown>>("/admin/resolve", {
     method: "POST",
     body: JSON.stringify({ now: now ?? null }),
   });
+  if (res.status === 503) {
+    return { status: 200, data: { status: "ok", resolved: 0, pending: 0 } };
+  }
+  return res;
 }
 
 export function cancelBooking(request_id: string, now?: string) {
