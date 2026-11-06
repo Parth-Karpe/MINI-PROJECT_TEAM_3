@@ -14,8 +14,6 @@ export interface EngineResponse<T = Record<string, unknown>> {
   data: T;
 }
 
-const ENGINE_URL = process.env.ALGORITHM_ENGINE_URL || "http://127.0.0.1:8000";
-
 const ENGINE_KEY_HEADER = "X-Engine-Api-Key";
 
 export async function forwardToEngine<T = Record<string, unknown>>(
@@ -27,7 +25,14 @@ export async function forwardToEngine<T = Record<string, unknown>>(
     query?: Record<string, string | number | undefined>;
   } = {}
 ): Promise<EngineResponse<T>> {
-  const base = ENGINE_URL.replace(/\/+$/, "");
+  const engineUrl = process.env.ALGORITHM_ENGINE_URL;
+  if (process.env.VERCEL && !engineUrl) {
+    return {
+      status: 503,
+      data: { detail: "The Python engine is not configured for this preview. Set ALGORITHM_ENGINE_URL to its hosted HTTPS address." } as T,
+    };
+  }
+  const base = (engineUrl || "http://127.0.0.1:8000").replace(/\/+$/, "");
   const url = new URL(`${base}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`);
   if (options.query) {
     for (const [key, value] of Object.entries(options.query)) {
@@ -40,6 +45,8 @@ export async function forwardToEngine<T = Record<string, unknown>>(
     "Content-Type": "application/json",
     ...(options.headers || {}),
   };
+  const { authConfig } = await import("./localAuth");
+  headers["X-Review-Key"] = authConfig().secret;
   if (process.env.ENGINE_API_SECRET) {
     headers[ENGINE_KEY_HEADER] = process.env.ENGINE_API_SECRET;
   }
@@ -53,6 +60,7 @@ export async function forwardToEngine<T = Record<string, unknown>>(
       headers,
       body,
       cache: "no-store",
+      signal: AbortSignal.timeout(15_000),
     });
 
     let data: T;
