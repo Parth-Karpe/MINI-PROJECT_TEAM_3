@@ -743,3 +743,31 @@ def get_state(window_start: datetime | None = None, window_end: datetime | None 
         "timetable_locked_count": len(_guard.all_locked()),
         "accepted_total_count": len(engine.accepted),
     }
+
+
+# E2 read-only explainability preview; no allocation mutations.
+from api.review import router as review_router
+app.include_router(review_router)
+
+from api.campus import router as campus_router
+app.include_router(campus_router)
+
+# The browser talks to the authenticated Next.js gateway, not directly to
+# legacy mutation endpoints. Bind this service to 127.0.0.1 for local review.
+@app.middleware("http")
+async def require_gateway_key(request, call_next):
+    if request.url.path in ("/health", "/docs", "/openapi.json", "/redoc"):
+        return await call_next(request)
+    import hmac
+    import json
+    from pathlib import Path
+    from fastapi.responses import JSONResponse
+    auth_file=Path(__file__).resolve().parents[1]/'data'/'local-publication'/'review-auth.json'
+    review_key=''
+    if auth_file.exists():
+        try:review_key=json.loads(auth_file.read_text())['secret']
+        except (ValueError,KeyError):pass
+    engine_key=os.environ.get('ENGINE_API_SECRET','')
+    valid=(bool(review_key) and hmac.compare_digest(request.headers.get('X-Review-Key',''),review_key)) or (bool(engine_key) and hmac.compare_digest(request.headers.get('X-Engine-Api-Key',''),engine_key))
+    if not valid:return JSONResponse({'detail':'Authenticated web gateway required'},status_code=403)
+    return await call_next(request)

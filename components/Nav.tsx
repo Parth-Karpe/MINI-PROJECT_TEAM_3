@@ -1,11 +1,6 @@
 "use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { DEMO_USERS, type Role } from "@/lib/publishedTimetable";
-export function Nav() {
-  const pathname = usePathname();
-  const roles: Role[] = ["hod", "faculty", "student", "admin"];
-  const selected = pathname.split("/")[2] as Role;
-  const admin = !pathname.startsWith("/dashboards/") || selected === "admin";
-  return <nav><div><h2 style={{color:"#4fd1c5",marginBottom:0}}>Smart Campus</h2><p style={{fontSize:12,color:"#7c8aa8",marginTop:4}}>CSE (AI) · Semester V</p><p style={{fontSize:11,color:"#7c8aa8",marginTop:30}}>DEMO DASHBOARDS</p>{roles.map(role => <Link key={role} href={`/dashboards/${role}`} style={selected===role?{background:"#183737",color:"#6ee7d7"}:{}}><span>{role.toUpperCase()}<small style={{display:"block",fontSize:11,color:"#94a3b8"}}>{DEMO_USERS[role].name}</small></span></Link>)}{admin && <><p style={{fontSize:11,color:"#7c8aa8",marginTop:24}}>ADMIN TOOLS</p>{[["/resources","Resources"],["/timetable","Legacy timetable"],["/timetable/maker","Timetable Studio"],["/schedule","Schedule"],["/bookings","Bookings & queues"],["/admin","Overrides & audit"]].map(([href,label]) => <Link key={href} href={href}>{label}</Link>)}</>}</div><p style={{fontSize:11,color:"#7c8aa8",marginTop:"auto",paddingTop:24}}>Local demo role switcher<br/>No production sign-in configured</p></nav>;
-}
+import Link from 'next/link';
+import {useEffect,useState} from 'react';
+import {usePathname} from 'next/navigation';
+import type {Identity} from '@/lib/localAuth';
+export function Nav(){const path=usePathname();const[user,setUser]=useState<Identity|null>(null);useEffect(()=>{fetch('/api/session').then(r=>r.json()).then(d=>setUser(d.user)).catch(()=>setUser(null));},[path]);return <nav><div><h2 style={{color:'#4fd1c5'}}>Smart Campus</h2><p>CSE (AI)<br/>Semesters I / III / V / VII</p>{user?<><p>{user.name}<br/><small>{user.id} · {user.role}</small></p><Link href={'/dashboards/'+user.role}>My dashboard</Link>{user.role==='admin'&&<><p>ADMIN TOOLS</p>{[['/resources','Legacy resources'],['/timetable','Legacy timetable'],['/timetable/maker','Timetable Studio'],['/schedule','Legacy schedule'],['/bookings','Legacy queue'],['/admin','Legacy overrides']].map(([href,label])=><Link key={href} href={href}>{label}</Link>)}</>}<button onClick={async()=>{await fetch('/api/session',{method:'DELETE'});window.location.href='/login';}}>Sign out</button></>:<Link href="/login">Sign in</Link>}</div><p style={{marginTop:'auto',fontSize:11}}>Local authenticated review mode<br/>Legacy tools use a separate allocator.</p></nav>}

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { timetableStore } from "@/lib/timetableStore";
+import { finalizeTimetable } from "@/lib/engine";
 
 export async function POST(req: Request) {
   try {
@@ -35,21 +36,15 @@ export async function POST(req: Request) {
     // Attempt to notify default timetable finalize endpoint if available
     let guardResult: Record<string, unknown> | null = null;
     try {
-      const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-      const host = process.env.VERCEL_URL || `127.0.0.1:${process.env.PORT || 3000}`;
-      const res = await fetch(`${protocol}://${host}/api/timetable/finalize`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const res = await finalizeTimetable({
           csv_text: csvText,
           actor_id: actorId,
           actor_role: actorRole,
           week_start: weekStart ? `${weekStart}T00:00:00` : new Date().toISOString(),
           weeks: Number(weeks) || 16,
-        }),
       });
-      if (res.ok) {
-        guardResult = await res.json();
+      if (res.status >= 200 && res.status < 300) {
+        guardResult = res.data;
       }
     } catch {
       // Python engine might not be running; that's fine, the timetable is published in Next.js

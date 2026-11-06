@@ -12,6 +12,7 @@ dist/
 node_modules/
 .vercel/
 .next/
+.next-build*/
 out/
 .env
 .env*.local

@@ -1,0 +1,8 @@
+entry_id,day,start_time,end_time,branch,semester,section,batch,course_code,course_name,session_type,faculty_id,faculty_name,room_id,expected_students,room_type,room_capacity
+A,Mon,09:00,10:00,CSE-AI,5,A,,C1,C1,theory,AK,AK,R1,24,classroom,60
+B,Mon,10:15,11:15,CSE-AI,5,A,,C2,C2,theory,SV,SV,R1,24,classroom,60
+C,Tue,09:00,10:00,CSE-AI,3,A,,C1,C1,theory,DK,DK,R2,24,classroom,60
+D,Tue,11:15,13:15,CSE-AI,5,A,A1,DL,DL,lab,AK,AK,LAB6,24,lab,60
+E,Wed,11:15,13:15,CSE-AI,5,A,A2,DL,DL,lab,SV,SV,LAB7,24,lab,60
+F,Thu,09:00,10:00,CSE-AI,1,A,,C1,C1,theory,AK,AK,R3,24,classroom,60
+G,Fri,09:00,10:00,CSE-AI,7,A,,C1,C1,project,AK,AK,HALL,24,hall,60
