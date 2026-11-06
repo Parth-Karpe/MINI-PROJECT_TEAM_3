@@ -10,6 +10,7 @@ dist/
 
 # Node & Next.js
 node_modules/
+.vercel/
 .next/
 out/
 .env
@@ -30,3 +31,7 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
+
+.vercel
+
+data/local-publication/
