@@ -46,7 +46,7 @@ from collections import defaultdict, deque
 from datetime import datetime, timedelta
 
 from fastapi import FastAPI, HTTPException, Header
-from fastapi.responses import FileResponse
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
 from algorithm_engine import (
@@ -689,14 +689,10 @@ def health() -> dict:
     return {"status": "ok"}
 
 
-# ---- dashboard (basic UI) ---------------------------------------------
-
-_UI_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ui")
-
-
 @app.get("/", include_in_schema=False)
 def dashboard():
-    return FileResponse(os.path.join(_UI_DIR, "index.html"))
+    frontend = os.environ.get("SMART_CAMPUS_WEB_URL", "http://localhost:3000").rstrip("/")
+    return RedirectResponse(frontend + "/dashboards/admin#imports", status_code=303)
 
 
 @app.get("/admin/state")
@@ -756,7 +752,7 @@ app.include_router(campus_router)
 # legacy mutation endpoints. Bind this service to 127.0.0.1 for local review.
 @app.middleware("http")
 async def require_gateway_key(request, call_next):
-    if request.url.path in ("/health", "/docs", "/openapi.json", "/redoc"):
+    if request.url.path in ("/", "/health", "/docs", "/openapi.json", "/redoc"):
         return await call_next(request)
     import hmac
     import json

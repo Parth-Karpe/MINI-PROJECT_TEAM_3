@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { EMPTY_PUBLICATION, parsePublicationCsv, validatePublication, type PublicationState } from "../publishedTimetable";
+import { EMPTY_PUBLICATION, parsePublicationCsv, parseResourceCsv, validatePublication, type PublicationState } from "../publishedTimetable";
 const memory = vi.hoisted(() => ({ state: null as PublicationState | null }));
 vi.mock("../publicationStore", () => ({ readPublication: () => structuredClone(memory.state), savePublication: (state: PublicationState) => { memory.state = structuredClone(state); } }));
 vi.mock("../localAuth",()=>({identityFromCookie:(cookie:string)=>cookie?JSON.parse(cookie):null,provisionStaff:vi.fn(),mapStudent:vi.fn()}));
@@ -60,5 +60,30 @@ describe("Static timetable publication", () => {
     expect(parsePublicationCsv(quoted)[0].faculty_name).toBe("Amit K, Faculty");
     await post({ role: "admin", action: "mapping", section: "B", batch: "B1", facultyId: "SV" });
     expect(memory.state!.studentSection).toBe("B"); expect(memory.state!.facultyId).toBe("SV");
+  });
+});
+
+describe("Dashboard CSV imports and edits", () => {
+  it("keeps unknown capacity and validates the resource CSV", () => {
+    expect(parseResourceCsv("room_id,name,type,capacity,building,exclusive_use\nlab6,LAB6,lab,,,yes"))
+      .toEqual([{id:"LAB6",name:"LAB6",type:"lab",capacity:null,building:null,exclusive_use:true}]);
+    expect(() => parseResourceCsv("room_id,capacity\nLAB6,0")).toThrow("positive integer");
+    expect(() => parseResourceCsv("room_id,capacity\nLAB6,40\nlab6,50")).toThrow("unique");
+  });
+
+  it("normalizes split groups and keeps instructors available to conflict checks", () => {
+    const [entry] = parsePublicationCsv(header + ",co_faculty_ids\nE1,Mon,09:00,10:00,CSE-AI,5,B2,,,MP,,AK,Amit K,LHC306,0,SV");
+    expect(entry).toMatchObject({ section:"B", batch:"B2", course_code:"", session_type:"", faculty_id:"AK;SV" });
+  });
+
+  it("updates one imported row and rejects stale or unauthorized edits", async () => {
+    await post({ role:"admin", action:"upload", csv });
+    const source = memory.state!.draft!;
+    const row = { ...source.rows[0], section:"B", start_time:"09:15" };
+    expect((await post({ role:"student", action:"edit-session", sourceId:source.id, row })).status).toBe(403);
+    expect((await post({ role:"admin", action:"edit-session", sourceId:source.id, row })).status).toBe(200);
+    expect(memory.state!.draft!.rows[0]).toMatchObject({ start_time:"09:15", section:"A" });
+    expect(memory.state!.draft!.rows[1]).toEqual(source.rows[1]);
+    expect((await post({ role:"admin", action:"edit-session", sourceId:source.id, row })).status).toBe(409);
   });
 });

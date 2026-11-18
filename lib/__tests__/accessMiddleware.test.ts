@@ -1,3 +1,4 @@
+import {dashboardPages} from "../dashboardPages";
 import {afterEach,describe,it,expect,vi} from 'vitest';
 import {NextRequest} from 'next/server';
 import {middleware} from '../../middleware';
@@ -17,7 +18,20 @@ describe('Review route access',()=>{
  it('prevents a student opening admin tools or another dashboard',async()=>{
   vi.stubGlobal('fetch',vi.fn().mockImplementation(()=>Promise.resolve(new Response(JSON.stringify({user:{id:'PARTH',role:'student'}})))));
   expect((await middleware(new NextRequest('http://localhost/api/resources'))).status).toBe(403);
-  const response=await middleware(new NextRequest('http://localhost/dashboards/hod'));
+  const response=await middleware(new NextRequest('http://localhost/dashboards/hod/inbox'));
   expect(response.headers.get('location')).toBe('http://localhost/dashboards/student');
+ });
+});
+
+describe("Dashboard section access", () => {
+ it("lists availability for all three demo roles and keeps staff actions role-specific", () => {
+  for (const role of ["student", "faculty", "hod"] as const) {
+   expect(dashboardPages[role].map(page => page.id)).toContain("availability");
+   expect(dashboardPages[role].map(page => page.id)).toContain("inbox");
+  }
+  expect(dashboardPages.faculty.map(page => page.id)).toContain("faculty-requests");
+  expect(dashboardPages.student.map(page => page.id)).not.toContain("faculty-requests");
+  expect(dashboardPages.faculty.map(page => page.id)).not.toContain("overrides");
+  expect(dashboardPages.hod.map(page => page.id)).toContain("overrides");
  });
 });

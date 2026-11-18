@@ -1,6 +1,7 @@
 import { randomBytes, scryptSync, timingSafeEqual, createHmac } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { DEMO_FACULTY } from "./demoFaculty";
 export type Identity={id:string;name:string;role:"admin"|"hod"|"faculty"|"student";facultyId?:string;semester?:number;section?:string;batch?:string};
 type Account=Identity&{salt:string;hash:string};
 type Config={secret:string;accounts:Account[]};
@@ -21,6 +22,17 @@ export function identityFromCookie(cookie:string):Identity|null{
  try{const token=cookie.split(';').map(s=>s.trim()).find(s=>s.startsWith('sc_session='))?.slice(11);if(!token)return null;const [payload,signature]=token.split('.');const config=authConfig();const expected=createHmac('sha256',config.secret).update(payload).digest();const received=Buffer.from(signature,'base64url');if(received.length!==expected.length||!timingSafeEqual(expected,received))return null;const data=JSON.parse(Buffer.from(payload,'base64url').toString());if(data.expires<Date.now())return null;const account=config.accounts.find(a=>a.id===data.id);if(!account)return null;const {hash,salt,...user}=account;return user;}catch{return null;}
 }
 export function authenticate(id:string,password:string):Identity|null{const account=authConfig().accounts.find(a=>a.id===id.toUpperCase());if(!account||password.length>200)return null;const supplied=scryptSync(password,account.salt,64);if(!timingSafeEqual(supplied,Buffer.from(account.hash,'hex')))return null;const {hash,salt,...user}=account;return user;}
+export function demoIdentity(role: unknown, facultyId?: unknown): Identity | null {
+ const accounts = { hod: "HOD-CSAI", faculty: "AK", student: "PARTH" } as const;
+ if (typeof role !== "string" || !Object.hasOwn(accounts, role)) return null;
+ const id = role === "faculty"
+  ? DEMO_FACULTY.find(teacher => teacher.id === (facultyId ?? accounts.faculty))?.id
+  : accounts[role as keyof typeof accounts];
+ const account = authConfig().accounts.find(candidate => candidate.id === id && candidate.role === role);
+ if (!account) return null;
+ const {hash, salt, ...user} = account;
+ return user;
+}
 export function provisionStaff(id:string,name:string,role:'faculty'|'hod'){
  const config=authConfig();if(config.accounts.some(a=>a.id===id))throw new Error('Account already exists.');
  const password=randomBytes(12).toString('base64url'),salt=randomBytes(16).toString('hex');

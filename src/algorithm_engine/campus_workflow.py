@@ -272,8 +272,32 @@ class CampusWorkflow:
             if role!='admin':raise ValueError('Only Admin uploads drafts')
             draft=p.get('draft')
             if not isinstance(draft,dict) or not draft.get('id') or not 1<=len(draft.get('rows',[]))<=2000:raise ValueError('Invalid timetable draft')
+            if p.get('source_id') and (s.get('draft') or s.get('publication') or {}).get('id')!=p['source_id']:
+                raise ValueError('The timetable changed. Refresh and select the current session.')
             s['draft']=copy.deepcopy(draft)
             self.notify(s,['hod'],'A timetable draft is ready for review')
+        elif action=='import_resources':
+            if role!='admin': raise ValueError('Only Admin imports resources')
+            records=p.get('records',[])
+            if not isinstance(records,list) or not 1<=len(records)<=2000:
+                raise ValueError('Import 1 to 2000 resources')
+            inventory=copy.deepcopy(s.get('imported_resources',{}))
+            scheduled=(s.get('publication') or {}).get('rows',[])+[a['row'] for a in s['additions']]
+            for record in records:
+                rid=record['id']
+                if s['resources'].get(rid,{}).get('parent'):
+                    raise ValueError(f'{rid} is already registered as a workstation')
+                current=s['resources'].get(rid,{})
+                metadata={**current, **{key:value for key,value in record.items() if value is not None}}
+                for row in scheduled:
+                    if row['room_id']!=rid: continue
+                    if metadata.get('capacity') and row.get('expected_students',0)>metadata['capacity']:
+                        raise ValueError(f"{rid}: capacity is below the scheduled student count")
+                    if row['session_type']=='lab' and metadata.get('type') not in ('lab',None):
+                        raise ValueError(f"{rid}: a scheduled lab requires a lab resource")
+                inventory[rid]={**inventory.get(rid,{}), **{key:value for key,value in record.items() if value is not None}}
+                s['resources'][rid]=metadata
+            s['imported_resources']=inventory
         elif action=='publish':
             if role!='hod': raise ValueError('Only HOD can publish')
             publication=p.get('publication');rows=publication.get('rows',[]) if isinstance(publication,dict) else []
@@ -294,6 +318,12 @@ class CampusWorkflow:
                     if value:
                         if meta[target] and meta[target]!=value: raise ValueError('Inconsistent resource metadata')
                         meta[target]=value
+            for rid, record in s.get('imported_resources',{}).items():
+                meta=resources.setdefault(rid,dict(id=rid,type=None,capacity=None,building=None,parent=None))
+                meta.update({key:value for key,value in record.items() if value is not None})
+            for rid, record in s['resources'].items():
+                if record.get('parent') in resources:
+                    resources[rid]=record
             sandbox=dict(publication={**publication,'rows':[]},resources=resources,requests=[],exceptions=[],additions=[])
             monday=date.fromisoformat(publication['term_start'])
             while monday.weekday()!=0:monday+=timedelta(days=1)
@@ -449,6 +479,45 @@ class CampusWorkflow:
             self.notify(s,self.recipients(s,dict(owner=actor,consents={},removes=removes,adds=[])),'HOD dated override: '+reason)
         else:raise ValueError('Unknown workflow action')
 
+    def resource_free_slots(self, state, actor, start, end, resources, rows):
+        personal = []
+        by_room = {}
+        for row in rows:
+            interval = (row['start_time'], row['end_time'])
+            by_room.setdefault(row['room_id'], []).append(interval)
+            if actor['role'] == 'student':
+                same_group = (str(row['semester']) == str(actor['semester'])
+                              and row['section'] == actor['section']
+                              and (not row.get('batch') or row['batch'] == actor['batch']))
+                if row.get('individual') == actor['id'] or (not row.get('individual') and same_group):
+                    personal.append(interval)
+        children = {}
+        for resource in state['resources'].values():
+            if resource.get('parent'):
+                children.setdefault(resource['parent'], []).append(resource['id'])
+        available = []
+        for resource in resources:
+            room = resource['id']
+            related = [room, *children.get(room, [])]
+            if resource.get('parent'):
+                related.append(resource['parent'])
+            blocked = personal + [interval for rid in related for interval in by_room.get(rid, [])]
+            cursor = start
+            free = []
+            for begins, ends in sorted(blocked):
+                if ends <= cursor:
+                    continue
+                if begins >= end:
+                    break
+                if cursor < begins:
+                    free.append(dict(start=cursor, end=begins))
+                cursor = max(cursor, ends)
+            if cursor < end:
+                free.append(dict(start=cursor, end=end))
+            if free:
+                available.append(dict(resource, free_slots=free))
+        return available
+
     def view(self,s,actor,p):
         role=actor['role'];day=p.get('date') or datetime.now(TZ).date().isoformat()
         date.fromisoformat(day)
@@ -472,17 +541,30 @@ class CampusWorkflow:
         for key,shares in fairness.items():
             values=list(shares.values());denom=len(values)*sum(v*v for v in values)
             measurements.append(dict(resource_week=key,hours=shares,jain=round(sum(values)**2/denom,3) if denom else None))
-        # Free-room search never exposes other people's class details.
-        availability=[]
+        # Only expose resource metadata and free windows to students.
+        visible_resources = [meta for meta in s['resources'].values()
+                             if role != 'student' or meta.get('type') in ('classroom', 'workstation')]
         start=p.get('start','15:00');end=p.get('end','16:00')
-        for rid,meta in s['resources'].items():
-            if role=='student' and meta.get('type') not in ('classroom','workstation'):continue
-            if hours(day,end)<=hours(day,start):continue
-            test=dict(entry_id='SEARCH',start_time=start,end_time=end,day=DAYS[date.fromisoformat(day).weekday()],room_id=rid,faculty_id='',faculty_name='',semester=str(actor.get('semester',5)),section=actor.get('section','A'),batch=actor.get('batch',''),expected_students=0,session_type='project')
-            if role=='student':test['individual']=actor['id']
-            try:self.validate_targets(s,[],[dict(date=day,row=test)])
-            except ValueError:continue
-            availability.append(meta)
+        availability=[]
+        resource_windows=None
+        try:
+            self.check_date(s, day)
+            date_open=True
+        except ValueError:
+            date_open=False
+        times = re.fullmatch(r'(?:[01][0-9]|2[0-3]):[0-5][0-9]', start or '') and re.fullmatch(r'(?:[01][0-9]|2[0-3]):[0-5][0-9]', end or '')
+        if times and '08:00' <= start < end <= '17:00' and date_open:
+            if role == 'student' or p.get('matrix') == '1':
+                resource_windows = self.resource_free_slots(s, actor, start, end, visible_resources, rows)
+            if role == 'student':
+                availability = resource_windows
+            elif p.get('matrix') != '1':
+                for meta in visible_resources:
+                    rid=meta['id']
+                    test=dict(entry_id='SEARCH',start_time=start,end_time=end,day=DAYS[date.fromisoformat(day).weekday()],room_id=rid,faculty_id='',faculty_name='',semester=str(actor.get('semester',5)),section=actor.get('section','A'),batch=actor.get('batch',''),expected_students=0,session_type='project')
+                    try:self.validate_targets(s,[],[dict(date=day,row=test)])
+                    except ValueError:continue
+                    availability.append(meta)
         weekly=copy.deepcopy((s['publication'] or {}).get('rows',[]))
         catalog=weekly
         if role=='faculty':
@@ -495,6 +577,12 @@ class CampusWorkflow:
             catalog+= [r for r in rows if r['entry_id'] not in known and ((str(r['semester']),r['section']) in groups or actor.get('facultyId') in ids(r))]
         elif role=='student':
             weekly=[r for r in weekly if str(r['semester'])==str(actor.get('semester')) and r['section']==actor.get('section') and (not r.get('batch') or r['batch']==actor.get('batch'))];catalog=[]
+        coverage_ids=[]
+        if role=='faculty':
+            absent_ids={e['source_id'] for e in s['exceptions'] if e['date']==day and e.get('absence')}
+            assigned={r['course_code'] for r in weekly if r['course_code']}
+            coverage_ids=[r['entry_id'] for r in catalog if r['entry_id'] in absent_ids
+                          and r['course_code'] in assigned and actor.get('facultyId') not in ids(r)]
         info={k:v for k,v in (s['publication'] or {}).items() if k!='rows'}
         weekly_occupancy=[{k:r[k] for k in ('day','start_time','end_time','room_id','session_type')} for r in (s['publication'] or {}).get('rows',[])]
         stats={};workload={}
@@ -510,7 +598,7 @@ class CampusWorkflow:
                 report=utilization_report(allocations,resources,hours(d,'08:00'),hours(d,'17:00'))
                 for rid,percentage in report.items():stats[rid]=stats.get(rid,0)+percentage/len(days)
         compliance=self.course_compliance((s['publication'] or {}).get('rows',[]),s.get('course_rules',[]))
-        return dict(draft=s.get('draft') if role in ('admin','hod') else None,course_compliance=compliance if role in ('admin','hod') else None,utilization=stats,faculty_hours=workload,weekly_occupancy=weekly_occupancy,weekly_rows=weekly,catalog=catalog,approved_info=info,date=day,rows=personal,requests=requests,resources=list(s['resources'].values()),available=availability,notifications=notifications[-100:],announcements=s['announcements'][-20:],fairness=measurements if role in ('hod','admin') else [],audit=s['audit'][-100:] if role in ('hod','admin') else [],publication=s['publication'] if role in ('admin','hod') else None,published=bool(s['publication']))
+        return dict(draft=s.get('draft') if role in ('admin','hod') else None,course_compliance=compliance if role in ('admin','hod') else None,utilization=stats,faculty_hours=workload,weekly_occupancy=weekly_occupancy,weekly_rows=weekly,catalog=catalog,approved_info=info,date=day,rows=personal,requests=requests,resources=visible_resources,available=availability,resource_windows=resource_windows,availability_date_open=date_open,availability_start=start,availability_end=end,coverage_ids=coverage_ids,notifications=notifications[-100:],announcements=s['announcements'][-20:],fairness=measurements if role in ('hod','admin') else [],audit=s['audit'][-100:] if role in ('hod','admin') else [],publication=s['publication'] if role in ('admin','hod') else None,published=bool(s['publication']))
 
     def course_compliance(self,rows,rules):
         violations=[];checks=[]
