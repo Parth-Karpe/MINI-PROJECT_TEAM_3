@@ -16,7 +16,16 @@ export default function RootLayout({
       <body>
         <div className="app">
           <Nav />
-          <main>{children}</main>
+          <main>
+            {process.env.VERCEL && (
+              <p role="status" style={{ padding: "12px 16px", background: "#fff3cd", color: "#664d03", margin: 0 }}>
+                Testing preview: timetable edits are temporary and may reset or differ between requests.
+                {!process.env.ALGORITHM_ENGINE_URL && " The Python booking engine is not connected; engine actions are unavailable."}
+                {" "}Use sample data only.
+              </p>
+            )}
+            {children}
+          </main>
         </div>
       </body>
     </html>

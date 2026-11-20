@@ -1,0 +1,39 @@
+entry_id,day,start_time,end_time,branch,semester,section,batch,course_code,course_name,session_type,faculty_id,faculty_name,room_id,expected_students,room_type,room_capacity
+S5-A-001,Mon,09:00,10:00,CSE-AI,5,A,,DL,Deep Learning,theory,AK,Amit K,LHC306,60,classroom,60
+S5-B-002,Mon,09:00,10:00,CSE-AI,5,B,,PGC,Parallel and GPU Computing,theory,DK,Dheeraj K,LHC307,60,classroom,60
+S5-A-003,Mon,10:15,11:15,CSE-AI,5,A,,CNS,Cryptography and Network Security,theory,SV,Sneha V,LHC306,60,classroom,60
+S5-B-004,Mon,10:15,11:15,CSE-AI,5,B,,CC,Cloud Computing,theory,PS,Pooja S,LHC307,60,classroom,60
+S5-A-005,Mon,11:30,12:30,CSE-AI,5,A,,PGC,Parallel and GPU Computing,theory,DK,Dheeraj K,LHC306,60,classroom,60
+S5-B-006,Mon,11:30,12:30,CSE-AI,5,B,,DL,Deep Learning,theory,AK,Amit K,LHC307,60,classroom,60
+S5-A-007,Tue,09:00,10:00,CSE-AI,5,A,,CNS,Cryptography and Network Security,theory,SV,Sneha V,LHC306,60,classroom,60
+S5-B-008,Tue,09:00,10:00,CSE-AI,5,B,,CC,Cloud Computing,theory,PS,Pooja S,LHC307,60,classroom,60
+S5-A-009,Tue,10:15,11:15,CSE-AI,5,A,,PGC,Parallel and GPU Computing,theory,DK,Dheeraj K,LHC306,60,classroom,60
+S5-B-010,Tue,10:15,11:15,CSE-AI,5,B,,DL,Deep Learning,theory,AK,Amit K,LHC307,60,classroom,60
+S5-A-011,Tue,11:30,12:30,CSE-AI,5,A,,CC,Cloud Computing,theory,PS,Pooja S,LHC306,60,classroom,60
+S5-B-012,Tue,11:30,12:30,CSE-AI,5,B,,CNS,Cryptography and Network Security,theory,SV,Sneha V,LHC307,60,classroom,60
+S5-A-013,Wed,09:00,10:00,CSE-AI,5,A,,PGC,Parallel and GPU Computing,theory,DK,Dheeraj K,LHC306,60,classroom,60
+S5-B-014,Wed,09:00,10:00,CSE-AI,5,B,,DL,Deep Learning,theory,AK,Amit K,LHC307,60,classroom,60
+S5-A-015,Wed,10:15,11:15,CSE-AI,5,A,,CC,Cloud Computing,theory,PS,Pooja S,LHC306,60,classroom,60
+S5-B-016,Wed,10:15,11:15,CSE-AI,5,B,,CNS,Cryptography and Network Security,theory,SV,Sneha V,LHC307,60,classroom,60
+S5-A-017,Wed,11:30,12:30,CSE-AI,5,A,,DL,Deep Learning,theory,AK,Amit K,LHC306,60,classroom,60
+S5-B-018,Wed,11:30,12:30,CSE-AI,5,B,,PGC,Parallel and GPU Computing,theory,DK,Dheeraj K,LHC307,60,classroom,60
+S5-A-019,Thu,09:00,10:00,CSE-AI,5,A,,CC,Cloud Computing,theory,PS,Pooja S,LHC306,60,classroom,60
+S5-B-020,Thu,09:00,10:00,CSE-AI,5,B,,CNS,Cryptography and Network Security,theory,SV,Sneha V,LHC307,60,classroom,60
+S5-A-021,Thu,10:15,11:15,CSE-AI,5,A,,DL,Deep Learning,theory,AK,Amit K,LHC306,60,classroom,60
+S5-B-022,Thu,10:15,11:15,CSE-AI,5,B,,PGC,Parallel and GPU Computing,theory,DK,Dheeraj K,LHC307,60,classroom,60
+S5-A-023,Thu,11:30,12:30,CSE-AI,5,A,,CNS,Cryptography and Network Security,theory,SV,Sneha V,LHC306,60,classroom,60
+S5-B-024,Thu,11:30,12:30,CSE-AI,5,B,,CC,Cloud Computing,theory,PS,Pooja S,LHC307,60,classroom,60
+S5-A-025,Fri,09:00,10:00,CSE-AI,5,A,,DL,Deep Learning,theory,AK,Amit K,LHC306,60,classroom,60
+S5-B-026,Fri,09:00,10:00,CSE-AI,5,B,,PGC,Parallel and GPU Computing,theory,DK,Dheeraj K,LHC307,60,classroom,60
+S5-A-027,Fri,10:15,11:15,CSE-AI,5,A,,CNS,Cryptography and Network Security,theory,SV,Sneha V,LHC306,60,classroom,60
+S5-B-028,Fri,10:15,11:15,CSE-AI,5,B,,CC,Cloud Computing,theory,PS,Pooja S,LHC307,60,classroom,60
+S5-A-029,Fri,11:30,12:30,CSE-AI,5,A,,PGC,Parallel and GPU Computing,theory,DK,Dheeraj K,LHC306,60,classroom,60
+S5-B-030,Fri,11:30,12:30,CSE-AI,5,B,,DL,Deep Learning,theory,AK,Amit K,LHC307,60,classroom,60
+S5-A-031,Mon,13:30,15:30,CSE-AI,5,A,A1,DL,Deep Learning,lab,AK,Amit K,LAB6,30,lab,30
+S5-A-032,Mon,13:30,15:30,CSE-AI,5,A,A2,CNS,Cryptography and Network Security,lab,SV,Sneha V,LAB7,30,lab,30
+S5-B-033,Tue,13:30,15:30,CSE-AI,5,B,B1,DL,Deep Learning,lab,AK,Amit K,LAB6,30,lab,30
+S5-B-034,Tue,13:30,15:30,CSE-AI,5,B,B2,CNS,Cryptography and Network Security,lab,SV,Sneha V,LAB7,30,lab,30
+S5-A-035,Wed,13:30,15:30,CSE-AI,5,A,A1,PGC,Parallel and GPU Computing,lab,DK,Dheeraj K,LAB6,30,lab,30
+S5-A-036,Wed,13:30,15:30,CSE-AI,5,A,A2,CC,Cloud Computing,lab,PS,Pooja S,LAB7,30,lab,30
+S5-B-037,Thu,13:30,15:30,CSE-AI,5,B,B1,PGC,Parallel and GPU Computing,lab,DK,Dheeraj K,LAB6,30,lab,30
+S5-B-038,Thu,13:30,15:30,CSE-AI,5,B,B2,CC,Cloud Computing,lab,PS,Pooja S,LAB7,30,lab,30
