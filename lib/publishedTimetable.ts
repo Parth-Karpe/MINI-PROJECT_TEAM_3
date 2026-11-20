@@ -1,3 +1,4 @@
+export const CLASS_GROUPS = ["A", "A1", "A2", "B", "B1", "B2"];
 export const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export const DEMO_USERS = { admin: { name: "Department Admin", id: "ADMIN-DEMO" }, hod: { name: "HOD · CSE (AI)", id: "HOD-DEMO" }, faculty: { name: "Amit K", id: "AK" }, student: { name: "Parth Karpe", id: "STUDENT-DEMO" } };
 export type Role = keyof typeof DEMO_USERS;
@@ -35,17 +36,27 @@ export function parsePublicationCsv(text: string): PublishedSession[] {
   return data.map((values, index) => {
     if (values.length !== headers.length) throw new Error(`Row ${index + 2}: column count differs from header.`);
     const r = Object.fromEntries(headers.map((h, i) => [h, values[i]]));
-    for (const key of required) if (!r[key]) throw new Error(`Row ${index + 2}: ${key} is required.`);
+    for (const key of required) if (!r[key] && key !== "course_code" && key !== "session_type") throw new Error(`Row ${index + 2}: ${key} is required.`);
     if (ids.has(r.entry_id)) throw new Error(`Duplicate entry_id: ${r.entry_id}`); ids.add(r.entry_id);
     const branch = r.branch.toUpperCase().replace(/[^A-Z]/g, "");
     if (!["CSEAI", "CSAI", "CSE"].includes(branch) || !["1", "3", "5", "7"].includes(r.semester)) throw new Error(`Row ${index + 2}: only semesters 1, 3, 5 and 7 CSE (AI) are supported. Use branch CSE-AI; legacy CSE is accepted for demo files.`);
-    if (!/^[AB]$/.test(r.section.toUpperCase())) throw new Error(`Row ${index + 2}: section must be A or B.`);
+    r.section = r.section.toUpperCase();
+    if (!CLASS_GROUPS.includes(r.section)) throw new Error(`Row ${index + 2}: use A, A1, A2, B, B1 or B2.`);
+    if (r.section.length === 2) {
+      if (r.batch && r.batch.toUpperCase() !== r.section) throw new Error(`Row ${index + 2}: conflicting section and batch.`);
+      r.batch = r.section;
+      r.section = r.section[0];
+    }
+    if (r.co_faculty_ids) {
+      r.faculty_id = [...new Set([r.faculty_id, r.co_faculty_ids].join(";").split(/[;,|]/).map(id => id.trim().toUpperCase()).filter(Boolean))].join(";");
+      delete r.co_faculty_ids;
+    }
     if (r.batch && ![`${r.section.toUpperCase()}1`, `${r.section.toUpperCase()}2`].includes(r.batch.toUpperCase())) throw new Error(`Row ${index + 2}: batch must match section (A1/A2 or B1/B2).`);
     if (!DAYS.includes(r.day)) throw new Error(`Row ${index + 2}: use Mon, Tue, Wed, Thu, Fri or Sat.`);
     for (const key of ["start_time", "end_time"]) if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(r[key])) throw new Error(`Row ${index + 2}: ${key} must be 24-hour HH:MM.`);
     if (minutes(r.end_time) <= minutes(r.start_time)) throw new Error(`Row ${index + 2}: end must follow start.`);
     if (minutes(r.start_time) < 480 || minutes(r.end_time) > 1020) throw new Error(`Row ${index + 2}: sessions must be within 08:00–17:00.`);
-    if (!["theory", "tutorial", "lab", "project"].includes(r.session_type)) throw new Error(`Row ${index + 2}: invalid session_type.`);
+    if (r.session_type && !["theory", "tutorial", "lab", "project"].includes(r.session_type)) throw new Error(`Row ${index + 2}: invalid session_type.`);
     const count = Number(r.expected_students || 0); if (!Number.isInteger(count) || count < 0) throw new Error(`Row ${index + 2}: invalid student count.`);
     const roomCapacity = r.room_capacity ? Number(r.room_capacity) : undefined;
     if (roomCapacity !== undefined && (!Number.isInteger(roomCapacity) || roomCapacity <= 0)) throw new Error(`Row ${index + 2}: room_capacity must be a positive integer.`);
@@ -83,5 +94,25 @@ export function deriveResources(rows: PublishedSession[]): CsvResource[] {
     const matches = rows.filter(r => r.room_id === id);
     return { id, name: matches.find(r => r.room_name)?.room_name || id, type: matches.find(r => r.room_type)?.room_type || null,
       capacity: matches.find(r => r.room_capacity)?.room_capacity || null, building: matches.find(r => r.building)?.building || null };
+  });
+}
+
+export function parseResourceCsv(text: string): (CsvResource & { exclusive_use: boolean })[] {
+  const [headers, ...data] = cells(text);
+  if (!headers?.includes("room_id") || new Set(headers).size !== headers.length) throw new Error("Resource CSV needs a room_id column and unique headers.");
+  if (data.length < 1 || data.length > 2000) throw new Error("Upload between 1 and 2000 resources.");
+  const ids = new Set<string>();
+  return data.map((values, index) => {
+    const error = (message: string) => new Error(`Row ${index + 2}: ${message}`);
+    if (values.length !== headers.length) throw error("column count differs from header.");
+    const row = Object.fromEntries(headers.map((key, i) => [key, values[i]]));
+    const id = row.room_id.toUpperCase();
+    if (!id || ids.has(id)) throw error("room IDs must be nonempty and unique.");
+    ids.add(id);
+    const capacity = row.capacity ? Number(row.capacity) : null;
+    if (capacity !== null && (!Number.isSafeInteger(capacity) || capacity < 1)) throw error("capacity must be a positive integer or blank.");
+    const exclusive = row.exclusive_use?.toLowerCase();
+    if (exclusive && !["yes", "true", "1", "y", "no", "false", "0", "n"].includes(exclusive)) throw error("exclusive_use must be yes or no.");
+    return { id, name: row.name || id, type: row.type?.toLowerCase() || null, capacity, building: row.building || null, exclusive_use: !["no", "false", "0", "n"].includes(exclusive || "") };
   });
 }

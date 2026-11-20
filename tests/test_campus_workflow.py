@@ -76,6 +76,8 @@ def test_extra_class_fairness_protects_committed_winner(engine):
 def test_absence_then_eligible_coverage(engine):
     id=request(engine,kind='absence');engine.execute(HOD,'approve',dict(id=id))
     assert all(r['entry_id']!='A' for r in view(engine)['rows'])
+    assert view(engine,DK)['coverage_ids']==['A']
+    assert view(engine,SV)['coverage_ids']==[]
     cover=request(engine,actor=DK,kind='cover')
     engine.execute(HOD,'approve',dict(id=cover))
     assert any(r['faculty_id']=='DK' for r in view(engine)['rows'])
@@ -225,3 +227,28 @@ def test_one_off_session_cannot_be_changed_as_if_it_recurred_next_week(engine):
     first=request(engine);engine.execute(HOD,'approve',dict(id=first))
     moved=next(r for r in view(engine,date='2026-11-10')['rows'] if r['start_time']=='10:15' and r['faculty_id']=='AK')
     with pytest.raises(ValueError,match='dated occurrence'):request(engine,source_id=moved['entry_id'],date='2026-11-17',target_date='2026-11-18')
+
+
+def test_student_free_slots_show_gaps_and_respect_access(engine):
+    engine.execute(ADMIN,'inventory',dict(records=[dict(id='M5',parent='LAB6')]))
+    result=engine.execute(STUDENT,'view',dict(date='2026-11-10',start='10:00',end='14:00'))
+    slots={resource['id']:resource['free_slots'] for resource in result['available']}
+    assert slots['M5']==[dict(start='10:00',end='11:15'),dict(start='13:15',end='14:00')]
+    assert 'LAB6' not in slots
+    assert all(resource['type'] in ('classroom','workstation') for resource in result['resources'])
+    monday=engine.execute(STUDENT,'view',dict(date='2026-11-09',start='09:00',end='11:30'))
+    assert next(resource['free_slots'] for resource in monday['available'] if resource['id']=='M5')==[
+        dict(start='10:00',end='10:15'),dict(start='11:15',end='11:30')]
+    assert engine.execute(STUDENT,'view',dict(date='2026-11-15',start='08:00',end='17:00'))['available']==[]
+
+
+def test_staff_matrix_reports_partial_windows_without_student_class_filter(engine):
+    arguments=dict(date='2026-11-09',start='08:00',end='12:00',matrix='1')
+    staff=engine.execute(AK,'view',arguments)
+    assert staff['availability_date_open']
+    windows={r['id']:r['free_slots'] for r in staff['resource_windows']}
+    assert windows['R1']==[dict(start='08:00',end='09:00'),dict(start='10:00',end='10:15'),dict(start='11:15',end='12:00')]
+    assert windows['LAB6']==[dict(start='08:00',end='12:00')]
+    student=engine.execute(STUDENT,'view',arguments)
+    assert 'LAB6' not in {r['id'] for r in student['resource_windows']}
+    assert not engine.execute(AK,'view',{**arguments,'date':'2026-11-15'})['availability_date_open']

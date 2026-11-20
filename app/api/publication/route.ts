@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
-import { parsePublicationCsv, validatePublication, facultyIds, deriveResources } from "@/lib/publishedTimetable";
+import { parsePublicationCsv, validatePublication, parseResourceCsv } from "@/lib/publishedTimetable";
 import { readPublication, savePublication } from "@/lib/publicationStore";
 import { parseStaffCsv, mergeStaff } from "@/lib/staffRegistry";
 import {identityFromCookie,provisionStaff,mapStudent} from '@/lib/localAuth';
@@ -15,7 +15,7 @@ export async function GET(req: Request) {
     const backend=await workflowCall(actor,'view');
     state.approved=backend.published?{...backend.approved_info,rows:backend.weekly_rows}:null;
     state.draft=backend.draft||null;
-    if (role === "admin" || role === "hod") return NextResponse.json({ ...state, resources: deriveResources(state.approved?.rows || []), draftResources: deriveResources(state.draft?.rows || []) });
+    if (role === "admin" || role === "hod") return NextResponse.json({ ...state, resources: backend.resources.map((resource: { id: string; name?: string }) => ({ ...resource, name: resource.name || resource.id })) });
     if (role !== "faculty" && role !== "student") return NextResponse.json({ error: "Choose a demo role." }, { status: 400 });
     const rows = state.approved?.rows || [];
     const personalRows = rows;
@@ -36,6 +36,35 @@ export async function POST(req: Request) {
       const merged = mergeStaff(state.staff || [], records);
       if (body.action === "staff-preview") return NextResponse.json({ records, totalAfterImport: merged.length });
       state.staff = merged;
+    } else if (body.action === "import-resources" && actor.role === "admin") {
+      if (typeof body.csv !== "string" || body.csv.length > 2_000_000) throw new Error("Upload a CSV smaller than 2 MB.");
+      await workflowCall(actor, "import_resources", { records: parseResourceCsv(body.csv) });
+      return NextResponse.json({ ok: true });
+    } else if (body.action === "edit-session" && actor.role === "admin") {
+      const current = await workflowCall(actor, "view");
+      const source = current.draft || current.publication;
+      if (!source || source.id !== body.sourceId) return NextResponse.json({ error: "The timetable changed. Refresh and select the current session." }, { status: 409 });
+      const rows: import("@/lib/publishedTimetable").PublishedSession[] = source.rows;
+      const original = rows.find(row => row.entry_id === body.row?.entry_id);
+      if (!original) throw new Error("Choose an imported session.");
+      const changes = ["day", "start_time", "end_time", "room_id", "faculty_id", "faculty_name"] as const;
+      const updated = { ...original };
+      for (const key of changes) {
+        if (typeof body.row[key] !== "string") throw new Error(`Invalid ${key}.`);
+        updated[key] = body.row[key];
+      }
+      if (updated.room_id.trim().toUpperCase() !== original.room_id) {
+        delete updated.room_capacity;
+        delete updated.room_type;
+        delete updated.room_name;
+        delete updated.building;
+      }
+      const csvLine = (values: unknown[]) => values.map(value => '"' + String(value ?? "").replaceAll('"', '""') + '"').join(",");
+      const csv = csvLine(Object.keys(updated)) + "\n" + csvLine(Object.values(updated));
+      const [edited] = parsePublicationCsv(csv);
+      const draftRows = rows.map(row => row.entry_id === original.entry_id ? edited : row);
+      state.draft = { id: randomUUID(), filename: source.filename, uploadedAt: new Date().toISOString(), rows: draftRows, findings: validatePublication(draftRows) };
+      await workflowCall(actor, "upload_draft", { draft: state.draft, source_id: source.id });
     } else if (body.action === "upload" && body.role === "admin") {
       if (typeof body.csv !== "string" || body.csv.length > 2_000_000) throw new Error("Upload a CSV smaller than 2 MB.");
       const rows = parsePublicationCsv(body.csv);

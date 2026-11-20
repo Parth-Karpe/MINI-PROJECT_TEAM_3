@@ -1,0 +1,18 @@
+# The Python engine runs separately, not as Vercel API functions.
+/api/
+/src/
+/tests/
+/scripts/
+/ui/
+/supabase/
+*.py
+*.db
+*.docx
+*.zip
+.env*
+!.env.example
+.venv/
+venv/
+node_modules/
+.next/
+*.tsbuildinfo
