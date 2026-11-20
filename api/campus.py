@@ -1,4 +1,4 @@
-import hmac,json
+import hmac,json,logging,os
 from pathlib import Path
 from fastapi import APIRouter,Header,HTTPException
 from pydantic import BaseModel,Field
@@ -9,11 +9,29 @@ class Action(BaseModel):
     actor:dict
     action:str
     payload:dict=Field(default_factory=dict)
+def trusted_gateway(key: str, local_directory: Path = directory) -> bool:
+    secret = os.environ.get('CAMPUS_GATEWAY_SECRET')
+    if not secret and not os.environ.get('CAMPUS_DATABASE_URL'):
+        try:
+            secret = json.loads((local_directory/'review-auth.json').read_text())['secret']
+        except (OSError, ValueError, KeyError, TypeError):
+            return False
+    return bool(secret) and hmac.compare_digest(key, secret)
+
+
 @router.post('/action')
 def execute(body:Action,x_review_key:str=Header(default='')):
-    auth=directory/'review-auth.json'
-    if not auth.exists() or not hmac.compare_digest(x_review_key,json.loads(auth.read_text())['secret']):
+    if not trusted_gateway(x_review_key, directory):
         raise HTTPException(403,'Trusted web gateway required')
-    directory.mkdir(parents=True,exist_ok=True)
-    try:return CampusWorkflow(str(directory/'campus_workflow.db')).execute(body.actor,body.action,body.payload)
-    except (ValueError,KeyError,TypeError) as e:raise HTTPException(400,str(e))
+    database_url = os.environ.get('CAMPUS_DATABASE_URL')
+    if not database_url:
+        directory.mkdir(parents=True, exist_ok=True)
+    try:
+        return CampusWorkflow(str(directory/'campus_workflow.db'), database_url=database_url).execute(body.actor,body.action,body.payload)
+    except (ValueError, KeyError, TypeError) as error:
+        raise HTTPException(400, str(error)) from error
+    except Exception as error:
+        if not database_url:
+            raise
+        logging.getLogger(__name__).error("Hosted workflow failed (%s)", type(error).__name__)
+        raise HTTPException(503, 'Hosted workflow database unavailable') from None

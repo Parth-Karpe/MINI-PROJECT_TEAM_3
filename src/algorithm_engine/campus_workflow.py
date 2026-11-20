@@ -1,8 +1,8 @@
-"""Dated campus workflows, persisted atomically in SQLite.
+"""Dated campus workflows, persisted atomically in SQLite or PostgreSQL.
 
 E1: BEGIN IMMEDIATE serializes final recheck + commit across processes.
 E2: reuse AVL interval indexes, priority aging and weighted interval scheduling.
-E3: one durable state transaction (review adapter; Supabase adapter is separate).
+E3: one durable state transaction, using a row lock when hosted on PostgreSQL.
 All academic mutations require HOD; the weekly source is never edited by a
 one-day exception. This service owns the effective schedule.
 """
@@ -38,23 +38,55 @@ def ids(row):
 def token(): return str(uuid4())
 
 class CampusWorkflow:
-    def __init__(self, filename, clock=None):
+    def __init__(self, filename, clock=None, *, database_url=None):
         self.filename=filename
+        self.database_url=database_url
         self.clock=clock or (lambda:datetime.now(TZ))
     def execute(self, actor, action, payload):
         if actor.get('role') not in ('admin','hod','faculty','student') or not actor.get('id'):
             raise ValueError('Authenticated identity required')
+        if self.database_url:
+            return self._execute_postgres(actor, action, payload)
         # OS-inspired in-process mutex + DB transaction for cross-process safety.
         with _process_lock(self.filename),sqlite3.connect(self.filename,timeout=15) as db:
             db.execute('create table if not exists campus_state(id integer primary key check(id=1),body text not null)')
             db.execute('begin immediate')
             saved=db.execute('select body from campus_state where id=1').fetchone()
-            state=json.loads(saved[0]) if saved else dict(publication=None,requests=[],exceptions=[],additions=[],resources={},notifications=[],audit=[],announcements=[])
-            if action=='view': return self.view(state,actor,payload)
-            result=self.mutate(state,actor,action,payload)
-            state['audit'].append(dict(id=token(),actor=actor['id'],action=action,at=now(),request_id=payload.get('id')))
-            db.execute('insert into campus_state(id,body) values(1,?) on conflict(id) do update set body=excluded.body',(json.dumps(state),))
-            return result or {'ok':True}
+            state=json.loads(saved[0]) if saved else self.empty_state()
+            result = self.apply_action(state, actor, action, payload)
+            if action != 'view':
+                db.execute('insert into campus_state(id,body) values(1,?) on conflict(id) do update set body=excluded.body',(json.dumps(state),))
+            return result
+
+    @staticmethod
+    def empty_state():
+        return dict(publication=None, requests=[], exceptions=[], additions=[], resources={},
+                    notifications=[], audit=[], announcements=[])
+
+    def apply_action(self, state, actor, action, payload):
+        if action == 'view':
+            return self.view(state, actor, payload)
+        result = self.mutate(state, actor, action, payload)
+        state['audit'].append(dict(id=token(), actor=actor['id'], action=action, at=now(),
+                                   request_id=payload.get('id')))
+        return result or {'ok': True}
+
+    def _execute_postgres(self, actor, action, payload):
+        from psycopg import connect
+        from psycopg.types.json import Jsonb
+
+        with connect(self.database_url, connect_timeout=5, prepare_threshold=None) as db:
+            if action == 'view':
+                saved = db.execute('select body from smart_campus_private.workflow_state where id = 1').fetchone()
+                return self.apply_action(saved[0] if saved else self.empty_state(), actor, action, payload)
+
+            db.execute("set local lock_timeout = '5s'")
+            db.execute('insert into smart_campus_private.workflow_state (id, body) values (1, %s) on conflict (id) do nothing',
+                       (Jsonb(self.empty_state()),))
+            state, = db.execute('select body from smart_campus_private.workflow_state where id = 1 for update').fetchone()
+            result = self.apply_action(state, actor, action, payload)
+            db.execute('update smart_campus_private.workflow_state set body = %s where id = 1', (Jsonb(state),))
+            return result
 
     def check_date(self,s,value):
         d=date.fromisoformat(value)

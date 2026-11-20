@@ -32,6 +32,7 @@ export async function POST(req: Request) {
       return NextResponse.json(provisionStaff(record.id,record.name,record.role));
     }
     if ((body.action === "staff-preview" || body.action === "staff-import") && body.role === "admin") {
+      if (process.env.CAMPUS_AUTH_CONFIG_JSON) throw new Error('Hosted staff accounts are configured by the deployment administrator');
       const records = parseStaffCsv(body.csv, body.staffRole);
       const merged = mergeStaff(state.staff || [], records);
       if (body.action === "staff-preview") return NextResponse.json({ records, totalAfterImport: merged.length });

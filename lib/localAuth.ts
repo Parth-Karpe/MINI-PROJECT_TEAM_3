@@ -8,6 +8,13 @@ type Config={secret:string;accounts:Account[]};
 const directory=path.join(process.cwd(),'data','local-publication');
 const file=path.join(directory,'review-auth.json');
 export function authConfig():Config {
+ const hosted = process.env.CAMPUS_AUTH_CONFIG_JSON;
+ if (hosted) {
+  const config = JSON.parse(hosted) as Config;
+  if (!config.secret || !Array.isArray(config.accounts)) throw new Error('Invalid hosted account configuration');
+  return config;
+ }
+ if (process.env.VERCEL) throw new Error('Hosted account configuration is missing');
  if(!existsSync(file)){
   mkdirSync(directory,{recursive:true});
   const users:Identity[]=[{id:'ADMIN',name:'Department Admin',role:'admin'},{id:'HOD-CSAI',name:'Department HOD',role:'hod'},{id:'AK',name:'Amit K',role:'faculty',facultyId:'AK'},{id:'SV',name:'Sneha V',role:'faculty',facultyId:'SV'},{id:'DK',name:'Dheeraj K',role:'faculty',facultyId:'DK'},{id:'PS',name:'Pooja S',role:'faculty',facultyId:'PS'},{id:'PARTH',name:'Parth Karpe',role:'student',semester:5,section:'A',batch:'A1'}];
@@ -34,9 +41,10 @@ export function demoIdentity(role: unknown, facultyId?: unknown): Identity | nul
  return user;
 }
 export function provisionStaff(id:string,name:string,role:'faculty'|'hod'){
+ if (process.env.CAMPUS_AUTH_CONFIG_JSON) throw new Error('Hosted accounts are configured by the deployment administrator');
  const config=authConfig();if(config.accounts.some(a=>a.id===id))throw new Error('Account already exists.');
  const password=randomBytes(12).toString('base64url'),salt=randomBytes(16).toString('hex');
  config.accounts.push({id,name,role,...(role==='faculty'?{facultyId:id}:{}),salt,hash:scryptSync(password,salt,64).toString('hex')});
  writeFileSync(file,JSON.stringify(config,null,2),{mode:0o600});return {id,password};
 }
-export function mapStudent(id:string,semester:number,section:string,batch:string){const config=authConfig();const account=config.accounts.find(a=>a.id===id&&a.role==='student');if(!account)throw new Error('Student account not found');Object.assign(account,{semester,section,batch});writeFileSync(file,JSON.stringify(config,null,2),{mode:0o600});}
+export function mapStudent(id:string,semester:number,section:string,batch:string){if(process.env.CAMPUS_AUTH_CONFIG_JSON)throw new Error('Hosted student mappings are configured by the deployment administrator');const config=authConfig();const account=config.accounts.find(a=>a.id===id&&a.role==='student');if(!account)throw new Error('Student account not found');Object.assign(account,{semester,section,batch});writeFileSync(file,JSON.stringify(config,null,2),{mode:0o600});}
