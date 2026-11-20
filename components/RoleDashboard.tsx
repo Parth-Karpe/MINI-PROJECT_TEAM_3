@@ -6,7 +6,7 @@ import { CampusWorkflows } from "./CampusWorkflows";
 import type { Identity } from "@/lib/localAuth";
 import { StaffImport } from "./StaffImport";
 import { FairnessPreview } from "./FairnessPreview";
-import { DashboardClock, useDashboardClock } from "./DashboardClock";
+import { useDashboardClock } from "./DashboardClock";
 import { WeeklyTimetable } from "./WeeklyTimetable";
 import { DAYS, DEMO_USERS, minutes, type PublicationState, type PublishedSession, type Role, type CsvResource } from "@/lib/publishedTimetable";
 
@@ -49,7 +49,6 @@ export function RoleDashboard({ role, section: page, title }: { role: Role; sect
   const freeRooms = rooms.filter(id => (role !== "student" || roomType(id) === "classroom") && !occupancy.some(r => r.room_id === id && r.day === day && minutes(r.start_time) < minutes(end) && minutes(start) < minutes(r.end_time)));
   return <div className="rd-dashboard">
     <header className="rd-header"><div><h1>{title || (role==='hod'?'HOD':role.charAt(0).toUpperCase() + role.slice(1)) + " Dashboard"}</h1><p>{user?.name || DEMO_USERS[role].name} · {role === "faculty" ? user?.facultyId || "AK" : user?.id || DEMO_USERS[role].id}{role === "student" && state ? ` · Semester ${state.studentSemester || 5} · Section ${state.studentSection} / ${state.studentBatch}` : ""}</p></div><button onClick={refresh}>Refresh</button></header>
-    {!admin && <DashboardClock {...clock} />}
     {error && <p role="alert" className="rd-error">{error}</p>}{notice && <p role="status" className="rd-success">{notice}</p>}
     {!state ? <p>Loading dashboard…</p> : <>
       {!page && <div className="rd-stats"><div><small>Publication</small><strong>{state.approved ? "Approved" : "Not published"}</strong></div><div><small>{reviewer ? "Published sessions" : "My sessions"}</small><strong>{rows.length}</strong></div><div><small>{reviewer ? "Known rooms" : "Weekly teaching / study hours"}</small><strong>{reviewer ? rooms.length : weeklyHours}</strong></div><div><small>{reviewer ? "Awaiting HOD review" : "Semester"}</small><strong>{reviewer ? state.draft ? "Yes" : "No" : role === "student" ? String(state.studentSemester || 5) : "1 / 3 / 5 / 7"}</strong></div></div>}

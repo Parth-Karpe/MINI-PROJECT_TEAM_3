@@ -50,10 +50,10 @@ export function DashboardClock({ now, isTesting, setClock }: ReturnType<typeof u
     setTime(null);
   }
 
-  return <section className="rd-panel" aria-labelledby="dashboard-clock-title">
-    <h2 id="dashboard-clock-title">Dashboard test clock</h2>
-    <p>{isTesting ? "Test time" : "Live campus time"}{now && <> · <time dateTime={now + "+05:30"}>{now.replace("T", " ")}</time></>} (IST)</p>
-    <form className="rd-actions" onSubmit={event => {
+  return <section className="sidebar-clock" aria-labelledby="dashboard-clock-title">
+    <h2 id="dashboard-clock-title">Test clock</h2>
+    <p>{isTesting ? "Test" : "Live"} · {now && <time dateTime={now + "+05:30"}>{now.slice(11, 16)} </time>}IST</p>
+    <form onSubmit={event => {
       event.preventDefault();
       if (!selectedDate || !selectedTime) return;
       setClock(selectedDate + "T" + selectedTime);
@@ -61,11 +61,13 @@ export function DashboardClock({ now, isTesting, setClock }: ReturnType<typeof u
     }}>
       <label>Date<input type="date" required value={selectedDate} onChange={event => setDate(event.target.value)} /></label>
       <label>Time<input type="time" required value={selectedTime} onChange={event => setTime(event.target.value)} /></label>
-      <button type="submit" disabled={!now}>Set test time</button>
+      <div className="sidebar-clock-actions">
+        <button className="sec" type="submit" disabled={!now}>Set test time</button>
       {isTesting && <button type="button" onClick={() => {
         setClock("");
         clearFields();
-      }}>Use live time</button>}
+      }} className="sec">Use live time</button>}
+      </div>
     </form>
   </section>;
 }

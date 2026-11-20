@@ -526,3 +526,20 @@ tr:hover td:not(.weekly-grid td) {
   color: var(--bad);
   margin: 16px 0 0;
 }
+
+.dashboard-nav-footer{margin-top:auto;display:grid;gap:12px;justify-items:start}
+.dashboard-nav-footer .dashboard-nav-signout{margin:0}
+.sidebar-clock{width:100%;padding:10px 0 2px;border-top:1px solid var(--bd)}
+.sidebar-clock h2{margin:0;font-size:13px;letter-spacing:0}
+.sidebar-clock p{margin:2px 0 8px;font-size:12px;color:var(--mu)}
+.sidebar-clock form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:6px}
+.sidebar-clock label{margin:0;min-width:0}
+.sidebar-clock input{min-width:0;font-size:12px;padding:4px;background:var(--panel);margin-top:3px}
+.sidebar-clock-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:5px}
+.sidebar-clock button.sec{font-size:11px;padding:4px 7px;color:var(--mu);background:var(--panel)}
+.sidebar-clock button.sec:hover{color:var(--tx);background:var(--bg);transform:none}
+@media(max-width:900px){
+  .dashboard-nav-footer{order:2;width:100%;margin-top:0;grid-template-columns:minmax(0,1fr) auto;align-items:end}
+  .dashboard-nav-footer .dashboard-nav-signout{grid-column:2;justify-self:end}
+  .sidebar-clock{max-width:260px}
+}

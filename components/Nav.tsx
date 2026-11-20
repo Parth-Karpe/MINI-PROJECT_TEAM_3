@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { Identity } from "@/lib/localAuth";
+import { DashboardClock, useDashboardClock } from "./DashboardClock";
 import { dashboardPages } from "@/lib/dashboardPages";
 
 export function Nav() {
@@ -18,6 +19,9 @@ export function Nav() {
       .catch(() => { if (!controller.signal.aborted) setUser(null); });
     return () => controller.abort();
   }, [path]);
+
+  const showClock = !!user && user.role !== "admin" && path.startsWith("/dashboards/");
+  const clock = useDashboardClock(showClock);
 
   if (path === "/login") return null;
 
@@ -34,10 +38,13 @@ export function Nav() {
         <Link key={link.href} href={link.href} className={path === link.href ? "on" : undefined}
           aria-current={path === link.href ? "page" : undefined}>{link.label}</Link>
       )}{user.role === "admin" && <Link href={base + "#imports"}>CSV imports</Link>}</div>
-      <button type="button" className="dashboard-nav-signout" onClick={async () => {
-        await fetch("/api/session", { method: "DELETE" });
-        window.location.assign("/login");
-      }}>Sign out</button>
+      <div className="dashboard-nav-footer">
+        {showClock && <DashboardClock {...clock} />}
+        <button type="button" className="dashboard-nav-signout" onClick={async () => {
+          await fetch("/api/session", { method: "DELETE" });
+          window.location.assign("/login");
+        }}>Sign out</button>
+      </div>
     </> : <Link href="/login">Sign in</Link>}
   </nav>;
 }
