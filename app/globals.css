@@ -543,3 +543,7 @@ tr:hover td:not(.weekly-grid td) {
   .dashboard-nav-footer .dashboard-nav-signout{grid-column:2;justify-self:end}
   .sidebar-clock{max-width:260px}
 }
+
+.portal-account{margin:0 0 18px}
+.portal-account input[readonly]{background:var(--bg)}
+.portal-submit{width:100%;min-height:44px;border-radius:8px}

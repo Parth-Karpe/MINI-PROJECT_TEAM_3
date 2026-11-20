@@ -1,5 +1,6 @@
 import {NextResponse} from 'next/server';
 import {authenticate,demoIdentity,identityFromCookie,signSession,type Identity} from '@/lib/localAuth';
+import { hostedDemoLoginEnabled } from "@/lib/demoLogin";
 export const runtime='nodejs';
 const attempts=new Map<string,{count:number;until:number}>();
 export async function GET(req:Request){const user=identityFromCookie(req.headers.get('cookie')||'');return NextResponse.json({user,mode:'local-review'},{status:user?200:401});}
@@ -22,11 +23,13 @@ export async function POST(req: Request) {
   return NextResponse.json({ error: "Cross-origin sign-in denied." }, { status: 403 });
  }
  const body = await req.json().catch(() => null);
- if (body && Object.hasOwn(body, "demoRole")) {
+ if (body && typeof body === "object" && Object.hasOwn(body, "demoRole")) {
   const localHosts = ["localhost", "127.0.0.1", "[::1]"];
-  if (process.env.NODE_ENV !== "development" || !source ||
-      !localHosts.includes(source.hostname) || !localHosts.includes(target.hostname)) {
-   return NextResponse.json({ error: "Demo sign-in is available on the local development server." }, { status: 403 });
+  const localDemo = process.env.NODE_ENV === "development" && !!source &&
+    localHosts.includes(source.hostname) && localHosts.includes(target.hostname);
+  const previewDemo = !!source && source.protocol === "https:" && hostedDemoLoginEnabled();
+  if (!localDemo && !previewDemo) {
+   return NextResponse.json({ error: "Passwordless sign-in is available on the test site." }, { status: 403 });
   }
   const user = demoIdentity(body.demoRole, body.facultyId);
   return user ? session(user, target.protocol === "https:") :
