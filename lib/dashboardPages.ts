@@ -27,15 +27,15 @@ export const dashboardPages: Record<Role, readonly { id: DashboardSection; label
 };
 
 /**
- * HOD sidebar: four sections. Every existing HOD page stays reachable as a tab inside its section;
- * the first page listed is where the sidebar link lands. "stats" is the department stats page.
+ * HOD sidebar: three sections. Scheduling and Resources each open one combined page
+ * (/dashboards/hod/scheduling, /dashboards/hod/resources) that shows all of their pages together. The full department stats page ("stats")
+ * is not in the sidebar: its essentials are on Overview, which links to it for the full detail.
  */
 export type HodPage = DashboardSection | "stats";
 export const hodSections: readonly { id: string; label: string; pages: readonly HodPage[] }[] = [
   { id: "overview", label: "Overview", pages: [] },
-  { id: "scheduling", label: "Scheduling", pages: ["review", "inbox", "timetable", "announcements"] },
+  { id: "scheduling", label: "Scheduling", pages: ["review", "inbox", "timetable", "announcements", "reports"] },
   { id: "resources", label: "Resources", pages: ["availability", "overrides"] },
-  { id: "reports", label: "Reports & stats", pages: ["reports", "stats"] },
 ];
 export const hodPageLabel = (page: HodPage) => page === "stats" ? "Department stats" : dashboardPages.hod.find(p => p.id === page)?.label ?? page;
 export const hodSectionOf = (page: HodPage) => hodSections.find(s => s.pages.includes(page));

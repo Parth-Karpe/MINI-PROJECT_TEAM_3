@@ -93,7 +93,7 @@ export function DeptStats({ embedded = false, children }: { embedded?: boolean; 
     <div className={`ds${embedded ? " ds-embedded" : ""}`} ref={root}>
       {embedded ? <div className="ds-embed-head">
         <h2 className="ds-panel-title">Department statistics</h2>
-        <span className="ds-muted">Whole department · published timetable, Mon to Sat, 08:00–17:00{data?.approvedAt ? ` · approved ${new Date(data.approvedAt).toLocaleDateString()}` : ""} · <Link href="/dashboards/hod/stats">Full detail in Reports &amp; stats →</Link></span>
+        <span className="ds-muted">Whole department · published timetable, Mon to Sat, 08:00–17:00{data?.approvedAt ? ` · approved ${new Date(data.approvedAt).toLocaleDateString()}` : ""} · <Link href="/dashboards/hod/stats">Full detail →</Link></span>
       </div> : <header className="ds-head">
         <div>
           <Link href="/dashboards/hod" className="ds-back"><ArrowLeft size={14} />HOD dashboard</Link>

@@ -45,7 +45,7 @@ export default function DemoLogin() {
   return <div className="portal-login">
     <section className="portal-login-card" aria-labelledby="portal-login-title" aria-busy={busy}>
       <header className="portal-login-header">
-        <h1 id="portal-login-title">Sign in to Workspace</h1>
+        <h1 id="portal-login-title">Welcome to Smart Campus Portal</h1>
       </header>
       <form onSubmit={event => { event.preventDefault(); void enter(); }}>
         <div className="portal-role-buttons" role="group" aria-label="Choose your role">

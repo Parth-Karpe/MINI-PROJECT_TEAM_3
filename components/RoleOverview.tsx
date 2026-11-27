@@ -167,25 +167,16 @@ export function RoomUtilChart({ utilization, resources }: { utilization: Record<
   </ChartPanel>;
 }
 
-/** The published department timetable, one class at a time. */
+/** The published department timetable: every class, one sheet each (semester · division), no selection needed. */
 export function DepartmentTimetable({ rows, clock }: { rows: PublishedSession[]; clock: string }) {
-  const classes = [...new Set(rows.map(r => `${r.semester}:${r.section}`))].sort((a, b) => {
-    const [sa, xa] = a.split(":"), [sb, xb] = b.split(":"); return Number(sa) - Number(sb) || xa.localeCompare(xb);
-  });
-  const [picked, setPicked] = useState("");
-  const current = classes.includes(picked) ? picked : classes[0] || "";
-  const [semester, section] = current.split(":");
-  const shown = rows.filter(r => r.semester === semester && r.section === section);
+  const classes = new Set(rows.map(r => `${r.semester}:${r.section}`)).size;
   return <section className="rd-panel ov-timetable" aria-labelledby="ov-tt-title">
     <div className="ov-panel-head">
       <h2 id="ov-tt-title">Department timetable</h2>
-      {classes.length > 0 && <label className="ov-select">Class
-        <select value={current} onChange={e => setPicked(e.target.value)}>
-          {classes.map(c => { const [s, x] = c.split(":"); return <option key={c} value={c}>Semester {s} · Section {x}</option>; })}
-        </select></label>}
+      {rows.length > 0 && <span className="ov-muted">{classes} class{classes === 1 ? "" : "es"} · {rows.length} sessions a week · select a period for its details</span>}
     </div>
     {!rows.length ? <p className="rd-empty">No published timetable yet. It appears here after you approve a draft in Scheduling → Timetable review.</p>
-      : <WeeklyTimetable rows={shown} clock={clock} expandable />}
+      : <WeeklyTimetable rows={rows} clock={clock} expandable />}
   </section>;
 }
 

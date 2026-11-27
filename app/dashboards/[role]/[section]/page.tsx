@@ -8,6 +8,9 @@ export default async function DashboardSectionPage({ params }: {
 }) {
   const { role, section } = await params;
   if (!Object.hasOwn(dashboardPages, role)) notFound();
+  // HOD sidebar sections that show several pages together.
+  if (role === "hod" && (section === "scheduling" || section === "resources"))
+    return <RoleDashboard role="hod" group={section} title={section === "scheduling" ? "Scheduling" : "Resources"} />;
   const page = dashboardPages[role as Role].find(entry => entry.id === section);
   if (!page) notFound();
   return <RoleDashboard role={role as Role} section={page.id} title={page.label} />;

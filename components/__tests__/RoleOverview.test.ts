@@ -57,12 +57,12 @@ describe("HOD overview charts", () => {
     expect(renderToStaticMarkup(createElement(RoomUtilChart, { utilization: {}, resources: [] }))).toContain("Utilisation appears");
     expect(renderToStaticMarkup(createElement(DepartmentTimetable, { rows: [], clock: "2026-11-27T10:00" }))).toContain("No published timetable yet");
   });
-  it("shows one class at a time, starting with the first", () => {
+  it("shows every class timetable at once, without a selector", () => {
     const html = renderToStaticMarkup(createElement(DepartmentTimetable, { rows: [row("X", "09:00", "10:00", { section: "B" }), row("Y", "09:00", "10:00")], clock: "2026-11-27T10:00" }));
-    expect(html).toContain("Semester 5 · Section A");
-    expect(html).toContain("Semester 5 · Section B");
     expect(html).toContain("Division A");
-    expect(html).not.toContain("Division B");
+    expect(html).toContain("Division B");
+    expect(html).not.toContain("<select");
+    expect(html).toContain("2 classes");
     expect(html).toContain("<details>");
   });
 });

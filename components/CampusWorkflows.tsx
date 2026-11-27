@@ -7,10 +7,13 @@ import { ResourceAvailability, type Availability } from "./ResourceAvailability"
 import { facultyIds, type PublishedSession, type Role } from '@/lib/publishedTimetable';
 type RequestItem={id:string;kind:string;date:string;reason:string;status:string;validation:string;decision?:string;owner:{id:string;name:string};consents:Record<string,string>;alternatives:{date:string;room_id:string;start:string;end:string}[];removes:{date:string;source_id:string}[];adds:{date:string;row:PublishedSession&{additional_hours?:number}}[];algorithm_trace?:{base_priority:number;effective_priority:number;hours_waited:number}};
 type View={utilization:Record<string,number>;faculty_hours:Record<string,number>;course_compliance:{certified:boolean;violations:string[];missing_requirements:string[];checks:{label:string;required:number[];scheduled:number[]}[]}|null;published:boolean;date:string;rows:PublishedSession[];catalog:PublishedSession[];resources:Resource[];available:Availability[];resource_windows?:Availability[];availability_date_open?:boolean;availability_start:string;availability_end:string;coverage_ids:string[];requests:RequestItem[];notifications:{id:string;message:string;at:string}[];announcements:{id:string;message:string}[];audit:{id:string;actor:string;action:string;at:string}[];fairness:{resource_week:string;hours:Record<string,number>;jain:number|null}[]};
-export function CampusWorkflows({role,section,facultyId,userId,clock}:{role:Role;section?:DashboardSection;facultyId?:string;userId?:string;clock:string}){
- const [manualDate,setDate]=useState(()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'})),[from,setFrom]=useState(section === 'availability' || role === 'student' ? '08:00' : '15:00'),[to,setTo]=useState(section === 'availability' || role === 'student' ? '17:00' : '16:00');
- const show = (page: DashboardSection) => !section || section === page;
- const matrix = !section || section === 'availability';
+export function CampusWorkflows({role,section,sections,titles={},slots={},facultyId,userId,clock}:{role:Role;section?:DashboardSection;sections?:DashboardSection[];titles?:Partial<Record<DashboardSection,string>>;slots?:Partial<Record<DashboardSection,React.ReactNode>>;facultyId?:string;userId?:string;clock:string}){
+ // `section` shows one page; `sections` shows several together, each under its own heading, in the order given.
+ const list = sections ?? (section ? [section] : null);
+ const has = (page: DashboardSection) => !!list && list.includes(page);
+ const [manualDate,setDate]=useState(()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'})),[from,setFrom]=useState(has('availability') || role === 'student' ? '08:00' : '15:00'),[to,setTo]=useState(has('availability') || role === 'student' ? '17:00' : '16:00');
+ const show = (page: DashboardSection) => !list || list.includes(page);
+ const matrix = !list || has('availability');
  const date = clock.slice(0,10) || manualDate;
  const [view,setView]=useState<View|null>(null),[error,setError]=useState(''),[message,setMessage]=useState(''),[busy,setBusy]=useState(false);
  const [reason,setReason]=useState(''),[announcement,setAnnouncement]=useState(''),[inventory,setInventory]=useState('id,parent\n'),[courseRules,setCourseRules]=useState('semester,section,course_code,l_hours,t_hours,p_hours\n');
@@ -27,12 +30,7 @@ export function CampusWorkflows({role,section,facultyId,userId,clock}:{role:Role
  async function act(action:string,payload:Record<string,unknown>={}){setBusy(true);setError('');setMessage('');try{const r=await fetch('/api/workflow',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,payload:action==='request'?{...payload,client_id:crypto.randomUUID()}:payload})});const d=await r.json();if(!r.ok)throw new Error(d.error);setMessage(action === 'request' ? 'Request submitted. ' + (d.validation || '') : d.message || 'Action saved.');await refresh();return true;}catch(e){setError(e instanceof Error?e.message:'Action failed');return false;}finally{setBusy(false);}}
  const mine=view?.catalog.filter(r=>facultyIds(r).includes(facultyId || ''))||[];
  const rowLabel=(r:PublishedSession)=>`${r.entry_id}: S${r.semester} ${r.section}/${r.batch||'all'} ${r.course_code} ${r._one_off_date || r.day} ${r.start_time} (${r.faculty_id})`;
- return <>
- {loadError && <p className="rd-error" role="alert">{loadError}</p>}
- {error && <p className="rd-error" role="alert">{error}</p>}
- {message && <p className="rd-success" role="status">{message}</p>}
- {section && section !== "timetable" && !view && !loadError && <p role="status">Loading…</p>}
- {view && !view.published && (section === "availability" || section === "faculty-requests") && <p>Waiting for HOD to publish the timetable.</p>}
+ const ttBlock = <>
  {show("timetable") && <section className="rd-panel">
    <h2>Effective timetable</h2>
    <div className="rd-actions">
@@ -44,12 +42,18 @@ export function CampusWorkflows({role,section,facultyId,userId,clock}:{role:Role
        visibleDay={new Date(date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short" })} />
      : <p>HOD must publish the timetable first.</p> : !loadError && <p>Loading selected date…</p>}
  </section>}
+ </>;
+ const availabilityBlock = <>
  {show("availability") && view?.published && <ResourceAvailability key={date} date={date} from={from} to={to} setFrom={setFrom} setTo={setTo}
    current={!loadError && view.date === date && view.availability_start === from && view.availability_end === to}
    resources={view.resources} available={view.resource_windows ?? view.available} dateOpen={view.availability_date_open !== false} canReserve={role === "student"} busy={busy} submit={act} />}
+ </>;
+ const facultyBlock = <>
  {show("faculty-requests") && role === "faculty" && facultyId && view?.published && view.date === date &&
    <FacultyRequests key={date + facultyId} date={date} facultyId={facultyId} catalog={view.catalog}
      teaching={mine} effective={view.rows} coverageIds={view.coverage_ids || []} resources={view.resources} busy={busy} submit={act} />}
+ </>;
+ const queueBlock = <>
  {show("inbox") && view && <section className="rd-panel"><h2>{role === "faculty" ? "Proposals and requests" : role === "student" ? "Request history" : "Request queue"}</h2>
  {!view.requests.length && <p>No requests yet.</p>}{role==='hod'&&!!view.requests.length&&<><p>Review the pending requests below, then resolve eligible extra-class and resource requests together. Confirmed bookings are protected; losing requests remain waitlisted.</p><button disabled={busy} onClick={()=>act('resolve')}>Approve and resolve competing bookings · weighted DP + aging</button></>}{view.requests.slice().reverse().map(r=><article key={r.id} className="rd-panel"><strong>{REQUEST_LABELS[r.kind] || r.kind} · {r.status.replaceAll('_', ' ')}</strong><p>{role === "faculty" && userId !== r.owner.id ? "Proposal from " : ""}{r.owner.name} · {r.date} · {r.id.slice(0,8)}</p><p>{r.reason}</p><ul>{r.removes?.map(e=><li key={e.date+e.source_id}>Release {e.date}: {e.source_id}</li>)}{r.adds?.map(a=><li key={a.row.entry_id}>Allocate {a.date} {a.row.start_time}–{a.row.end_time}: {a.row.course_name}, S{a.row.semester} {a.row.section}/{a.row.batch||'all'}, {a.row.room_id} ({a.row.faculty_id||'individual study'}) · {a.row.expected_students||'unknown'} participants{a.row.additional_hours?` · ${a.row.additional_hours} additional hours`:null}</li>)}</ul><p>{r.decision||r.validation}</p>{Object.keys(r.consents).length>0&&<p>Consent: {Object.entries(r.consents).map(([id,v])=>`${id}: ${v}`).join(' · ')}</p>}{r.algorithm_trace&&<p>Base priority {r.algorithm_trace.base_priority} · Waiting {r.algorithm_trace.hours_waited.toFixed(2)} hours · Effective priority {r.algorithm_trace.effective_priority.toFixed(2)}</p>}{r.alternatives?.length>0&&<p>Feasible alternatives at last check: {r.alternatives.map(a=>`${a.date} ${a.start}–${a.end} ${a.room_id}`).join('; ')}. Submit a revised request to use one.</p>}<div className="rd-actions">
  {role==='faculty'&&facultyId&&r.consents[facultyId]==='pending'&&r.status==='pending_consent'&&<><button disabled={busy} onClick={()=>act('consent',{id:r.id,accept:true})}>Accept proposal</button><button disabled={busy} onClick={()=>act('consent',{id:r.id,accept:false})}>Reject proposal</button></>}
@@ -57,16 +61,55 @@ export function CampusWorkflows({role,section,facultyId,userId,clock}:{role:Role
  {role==='hod'&&['pending_hod','pending_consent','waitlisted'].includes(r.status)&&<button disabled={busy} onClick={()=>act('reject',{id:r.id,reason:'Rejected by HOD'})}>Reject request</button>}
  {(role === 'hod' || userId === r.owner.id) && !['cancelled','rejected','expired'].includes(r.status)&&(r.status!=='approved'||role==='hod')&&<button disabled={busy} onClick={()=>act('cancel',{id:r.id})}>{r.status==='approved'?'Cancel approved change (restoration checked)':'Cancel request'}</button>}
  </div></article>)}</section>}
+ </>;
+ const inventoryBlock = <>
  {role==='admin'&&view?.published&&view.date===date&&<section className="rd-panel"><h2>Workstation inventory</h2><p>Import explicit machine IDs and their parent lab. Parent labs must already exist in the timetable CSV with room_type=lab. No computers are invented automatically.</p><textarea rows={4} value={inventory} onChange={e=>setInventory(e.target.value)}/><button disabled={busy} onClick={()=>{const lines=inventory.trim().split(/\r?\n/);if(lines[0]!=='id,parent'){setError('Use header id,parent');return;}const records=lines.slice(1).map(l=>{const[id,parent]=l.split(',').map(x=>x.trim().toUpperCase());return{id,parent};});void act('inventory',{records});}}>Import workstation IDs</button></section>}
- {section === "overrides" && view && !view.published && <p>Waiting for HOD to publish the timetable.</p>}
- {role==='hod'&&<>{show("announcements") && <section className="rd-panel"><h2>Publish an announcement</h2><input value={announcement} onChange={e=>setAnnouncement(e.target.value)} placeholder="Department announcement"/><button disabled={busy} onClick={()=>act('announcement',{message:announcement})}>Publish announcement</button><p>An announcement does not reserve a room. Faculty should submit a separate event resource request.</p></section>}{show("overrides") && view?.published&&view.date===date&&<section className="rd-panel"><h2>Exceptional dated cancellation</h2><p>Select the exact static sessions to release on {date}. This does not rewrite future weeks. Dynamic allocations must be cancelled through their request cards.</p>{view.catalog.filter(r=>r.day===new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'})).map(r=><label style={{display:'block'}} key={r.entry_id}><input type="checkbox" checked={overrideIds.includes(r.entry_id)} onChange={e=>setOverrideIds(e.target.checked?[...overrideIds,r.entry_id]:overrideIds.filter(id=>id!==r.entry_id))}/>{rowLabel(r)}</label>)}<label>Optional pending request to allocate after release<select value={overrideRequest} onChange={e=>setOverrideRequest(e.target.value)}><option value="">Cancellation only</option>{view.requests.filter(r=>['pending_hod','waitlisted'].includes(r.status)).map(r=><option key={r.id} value={r.id}>{r.kind} · {r.owner.name} · {r.date} · {r.id.slice(0,8)}</option>)}</select></label><input value={reason} onChange={e=>setReason(e.target.value)} placeholder="Detailed override reason"/><button disabled={busy||!overrideIds.length||reason.length<10} onClick={()=>{if(window.confirm('Cancel the selected dated sessions, allocate the selected pending request if any, and notify affected users?'))void act('override',{reason,request_id:overrideRequest||undefined,affected:overrideIds.map(id=>({source_id:id,date}))});}}>Confirm dated override</button></section>}</>}
-
+ </>;
+ const overridesBlock = <>
+ {has("overrides") && view && !view.published && <p>Waiting for HOD to publish the timetable.</p>}
+ {role==='hod'&&<>{show("overrides") && view?.published&&view.date===date&&<section className="rd-panel"><h2>Exceptional dated cancellation</h2><p>Select the exact static sessions to release on {date}. This does not rewrite future weeks. Dynamic allocations must be cancelled through their request cards.</p>{view.catalog.filter(r=>r.day===new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'})).map(r=><label style={{display:'block'}} key={r.entry_id}><input type="checkbox" checked={overrideIds.includes(r.entry_id)} onChange={e=>setOverrideIds(e.target.checked?[...overrideIds,r.entry_id]:overrideIds.filter(id=>id!==r.entry_id))}/>{rowLabel(r)}</label>)}<label>Optional pending request to allocate after release<select value={overrideRequest} onChange={e=>setOverrideRequest(e.target.value)}><option value="">Cancellation only</option>{view.requests.filter(r=>['pending_hod','waitlisted'].includes(r.status)).map(r=><option key={r.id} value={r.id}>{r.kind} · {r.owner.name} · {r.date} · {r.id.slice(0,8)}</option>)}</select></label><input value={reason} onChange={e=>setReason(e.target.value)} placeholder="Detailed override reason"/><button disabled={busy||!overrideIds.length||reason.length<10} onClick={()=>{if(window.confirm('Cancel the selected dated sessions, allocate the selected pending request if any, and notify affected users?'))void act('override',{reason,request_id:overrideRequest||undefined,affected:overrideIds.map(id=>({source_id:id,date}))});}}>Confirm dated override</button></section>}</>}
+ </>;
+ const announcePublishBlock = <>
+ {role==='hod'&&<>{show("announcements") && <section className="rd-panel"><h2>Publish an announcement</h2><input value={announcement} onChange={e=>setAnnouncement(e.target.value)} placeholder="Department announcement"/><button disabled={busy} onClick={()=>act('announcement',{message:announcement})}>Publish announcement</button><p>An announcement does not reserve a room. Faculty should submit a separate event resource request.</p></section>}</>}
+ </>;
+ const ltpBlock = <>
  {role==='admin'&&<section className="rd-panel"><h2>Official L:T:P requirements · CSV</h2><p>Enter weekly contact hours, not credits or number of lab sessions. Rules apply per semester, section and course. Parallel lab batches are checked separately. Import rules before submitting the next timetable for HOD publication.</p><textarea rows={5} style={{width:'100%'}} value={courseRules} onChange={e=>setCourseRules(e.target.value)}/><button disabled={busy} onClick={()=>{const lines=courseRules.trim().split(/\r?\n/);if(lines[0]!=='semester,section,course_code,l_hours,t_hours,p_hours'){setError('Use the exact template header');return;}const records=lines.slice(1).map(line=>{const [semester,section,course_code,l,t,p]=line.split(',').map(x=>x.trim());return{semester,section,course_code,l_hours:l===''?null:Number(l),t_hours:t===''?null:Number(t),p_hours:p===''?null:Number(p)};});void act('course_rules',{records});}}>Import L:T:P rules</button></section>}
+ </>;
+ const reportsBlock = <>
  {show("reports") && (role==='admin'||role==='hod')&&view?.course_compliance&&<section className="rd-panel"><h2>Published base · L:T:P compliance</h2><p>{view.course_compliance.certified?'Matches all supplied course contact-hour requirements':'Not certified: missing requirements or mismatches'}</p>{view.course_compliance.violations.map(v=><p className="rd-error" key={v}>{v}</p>)}<p>Missing requirements: {view.course_compliance.missing_requirements.join(', ')||'None'}</p><div className="rd-table-wrap"><table><thead><tr><th>Course / cohort</th><th>Required L:T:P hours</th><th>Scheduled L:T:P hours</th></tr></thead><tbody>{view.course_compliance.checks.map(c=><tr key={c.label}><td>{c.label}</td><td>{c.required.join(' : ')}</td><td>{c.scheduled.join(' : ')}</td></tr>)}</tbody></table></div></section>}
  {show("reports") && role==='hod'&&view?.published&&view.date===date&&<section className="rd-panel"><h2>Effective week · scheduled utilization</h2><p>Week containing {date}; approved dated changes included. Uses the Python sweep-line utilization report over 08:00–17:00 on teaching days in the term. Measures reserved resource time, not actual attendance.</p>{Object.entries(view.utilization).map(([id,v])=><div className="rd-usage" key={id}><div><strong>{id}</strong><span>{v.toFixed(1)}%</span></div><progress max={100} value={v}/></div>)}<h3>Faculty teaching hours this week</h3>{Object.entries(view.faculty_hours).map(([id,v])=><p key={id}>{id}: {v.toFixed(2)} hours</p>)}</section>}
  {show("reports") && role==='hod'&&!!view?.fairness.length&&<section className="rd-panel"><h2>Fairness of actual decisions</h2><p>Allocated hours per requester, resource and week. Eligible queue members with zero hours are included. N/A means no allocated hours. This is distinct from the hypothetical preview.</p>{view.fairness.map(f=><div key={f.resource_week}><strong>{f.resource_week} · Jain {f.jain??'N/A'}</strong>{Object.entries(f.hours).map(([u,h])=><p key={u}>{u}: {h.toFixed(2)} allocated hours</p>)}</div>)}</section>}
+ </>;
+ const notificationsBlock = <>
  {show("inbox") && view && <section className="rd-panel"><h2>Notifications</h2>{!view.notifications.length && <p>No notifications yet.</p>}{view.notifications.slice().reverse().map(n=><p key={n.id}>{n.message}<small style={{display:'block'}}>{new Date(n.at).toLocaleString()}</small></p>)}</section>}
+ </>;
+ const announcementListBlock = <>
  {(role === "hod" ? show("announcements") : show("inbox")) && view && <section className="rd-panel"><h2>Department announcements</h2>{!view.announcements.length && <p>No announcements yet.</p>}{view.announcements.map(a=><p key={a.id}>{a.message}</p>)}</section>}
+ </>;
+ const historyBlock = <>
  {show("reports") && (role==='hod'||role==='admin')&&!!view?.audit.length&&<section className="rd-panel"><h2>Decision history</h2>{view.audit.slice(-20).reverse().map(a=><p key={a.id}>{a.actor} · {a.action} · {new Date(a.at).toLocaleString()}</p>)}</section>}
+ </>;
+ const groups: Record<DashboardSection, React.ReactNode> = {
+   timetable: ttBlock, availability: availabilityBlock, "faculty-requests": facultyBlock,
+   inbox: <>{queueBlock}{notificationsBlock}{role !== "hod" && announcementListBlock}</>,
+   overrides: overridesBlock,
+   announcements: <>{announcePublishBlock}{role === "hod" && announcementListBlock}</>,
+   reports: <>{reportsBlock}{historyBlock}</>,
+   review: null,
+ };
+ return <>
+ {loadError && <p className="rd-error" role="alert">{loadError}</p>}
+ {error && <p className="rd-error" role="alert">{error}</p>}
+ {message && <p className="rd-success" role="status">{message}</p>}
+ {list && !(list.length === 1 && list[0] === "timetable") && !view && !loadError && <p role="status">Loading…</p>}
+ {view && !view.published && (has("availability") || has("faculty-requests")) && <p>Waiting for HOD to publish the timetable.</p>}
+ {sections ? sections.map(s => <section key={s} className="hod-block" aria-labelledby={`hod-block-${s}`}>
+   {titles[s] && <h2 className="hod-block-title" id={`hod-block-${s}`}>{titles[s]}</h2>}
+   {slots[s]}
+   {groups[s]}
+ </section>) : <>
+ {ttBlock}{availabilityBlock}{facultyBlock}{queueBlock}{inventoryBlock}{overridesBlock}{announcePublishBlock}
+ {ltpBlock}{reportsBlock}{notificationsBlock}{announcementListBlock}{historyBlock}
+ </>}
  </>;
 }

@@ -706,3 +706,12 @@ a.ov-card:hover{border-color:var(--ac);box-shadow:0 6px 18px rgba(36,84,230,.12)
 .ds-embedded .ds-panel{padding:18px 20px;margin-bottom:16px}
 .ds-embedded .ds-chips{max-height:340px}
 .ds-embedded .ds-blank{margin-top:12px}
+
+
+/* HOD combined pages (Scheduling, Resources): one clearly labelled block per section */
+.hod-block{margin:26px 0 6px;padding-top:4px}
+.hod-block:first-of-type{margin-top:18px}
+.hod-block-title{display:flex;align-items:center;gap:10px;margin:0 0 -4px!important;padding:0 0 9px;font-size:15px!important;font-weight:700;letter-spacing:-.01em;color:var(--tx)!important;border-bottom:2px solid var(--p2)}
+.hod-block-title::before{content:"";width:4px;height:18px;border-radius:2px;background:var(--ac)}
+.hod-block>.rd-panel,.hod-block>p{margin:14px 0}
+.hod-block .rd-panel h2{font-size:16px}
