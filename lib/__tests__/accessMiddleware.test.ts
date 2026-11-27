@@ -16,7 +16,7 @@ describe('Review route access',()=>{
   expect((await middleware(new NextRequest('http://localhost/api/workflow'))).status).toBe(401);
  });
  it('prevents a student opening admin tools or another dashboard',async()=>{
-  vi.stubGlobal('fetch',vi.fn().mockImplementation(()=>Promise.resolve(new Response(JSON.stringify({user:{id:'PARTH',role:'student'}})))));
+  vi.stubGlobal('fetch',vi.fn().mockImplementation(()=>Promise.resolve(new Response(JSON.stringify({user:{id:'01FE24BCI062',role:'student'}})))));
   expect((await middleware(new NextRequest('http://localhost/api/resources'))).status).toBe(403);
   const response=await middleware(new NextRequest('http://localhost/dashboards/hod/inbox'));
   expect(response.headers.get('location')).toBe('http://localhost/dashboards/student');

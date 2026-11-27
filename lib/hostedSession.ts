@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { STAFF_ACCOUNTS, isUsn } from "./demoFaculty";
 
 function decodeBase64Url(value: string): Uint8Array<ArrayBuffer> {
   return Uint8Array.from(atob(value.replace(/-/g, "+").replace(/_/g, "/")), char => char.charCodeAt(0));
@@ -19,8 +20,10 @@ export async function hostedSessionRole(request: NextRequest, configValue: strin
     if (!valid) return null;
     const { id, expires } = JSON.parse(new TextDecoder().decode(decodeBase64Url(payload)));
     if (typeof id !== "string" || !Number.isSafeInteger(expires) || expires <= Date.now()) return null;
-    const role = config.accounts.find((account: { id: string }) => account.id === id)?.role;
-    return ["admin", "hod", "faculty", "student"].includes(role) ? role : null;
+    if (isUsn(id)) return "student";
+    const role = STAFF_ACCOUNTS.find(account => account.id === id)?.role
+      ?? config.accounts.find((account: { id: string; role?: string }) => account.id === id && account.role !== "student")?.role;
+    return ["admin", "hod", "faculty"].includes(role) ? role : null;
   } catch {
     return null;
   }

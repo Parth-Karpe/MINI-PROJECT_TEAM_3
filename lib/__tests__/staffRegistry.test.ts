@@ -3,7 +3,7 @@ import { parseStaffCsv, mergeStaff } from "../staffRegistry";
 import { EMPTY_PUBLICATION, type PublicationState } from "../publishedTimetable";
 const memory=vi.hoisted(()=>({state:null as PublicationState|null}));
 vi.mock("../publicationStore",()=>({readPublication:()=>structuredClone(memory.state),savePublication:(s:PublicationState)=>{memory.state=structuredClone(s);}}));
-vi.mock("../localAuth",()=>({identityFromCookie:(cookie:string)=>cookie?JSON.parse(cookie):null,provisionStaff:vi.fn(),mapStudent:vi.fn()}));
+vi.mock("../localAuth",()=>({identityFromCookie:(cookie:string)=>cookie?JSON.parse(cookie):null,provisionStaff:vi.fn(),mapStudents:vi.fn()}));
 vi.mock("../workflowBridge",()=>({workflowCall:async(actor:{role:string},action:string)=>{
  if(action==='publish')return {ok:true};
  const approved=memory.state?.approved;const all=approved?.rows||[];
@@ -34,7 +34,7 @@ describe('Admin staff CSV registration',()=>{
   expect((await post({...body,action:'staff-import',role:'faculty'})).status).toBe(403);
   expect((await post({...body,action:'staff-import'})).status).toBe(200);
   expect(memory.state!.staff).toHaveLength(1);
-  const student=await(await GET(new Request('http://localhost/api/publication?role=student',{headers:{cookie:JSON.stringify({id:'PARTH',role:'student'})}}))).json();
+  const student=await(await GET(new Request('http://localhost/api/publication?role=student',{headers:{cookie:JSON.stringify({id:'01FE24BCI062',role:'student'})}}))).json();
   expect(student.staff).toBeUndefined();
  });
 });

@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { parsePublicationCsv, validatePublication, parseResourceCsv } from "@/lib/publishedTimetable";
 import { readPublication, savePublication } from "@/lib/publicationStore";
 import { parseStaffCsv, mergeStaff } from "@/lib/staffRegistry";
-import {identityFromCookie,provisionStaff,mapStudent} from '@/lib/localAuth';
+import {identityFromCookie,provisionStaff,mapStudents} from '@/lib/localAuth';
 import {workflowCall} from '@/lib/workflowBridge';
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
       if (!/^[A-Za-z0-9_-]{1,40}$/.test(body.facultyId)) throw new Error("Enter the faculty ID used in the CSV.");
       if (![1,3,5,7].includes(Number(body.semester || 5))) throw new Error("Choose semester 1, 3, 5 or 7.");
       state.studentSemester = Number(body.semester || 5); state.studentSection = body.section; state.studentBatch = body.batch; state.facultyId = body.facultyId.toUpperCase();
-      mapStudent('PARTH',state.studentSemester,state.studentSection,state.studentBatch);
+      mapStudents(state.studentSemester,state.studentSection,state.studentBatch);
     } else if (body.action === "approve" && body.role === "hod") {
       state.draft=(await workflowCall(actor,'view')).draft||null;
       if (!state.draft || state.draft.id !== body.draftId) return NextResponse.json({ error: "The draft changed. Refresh and review it again." }, { status: 409 });

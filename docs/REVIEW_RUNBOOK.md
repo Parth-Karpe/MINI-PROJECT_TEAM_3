@@ -13,7 +13,7 @@ Open http://127.0.0.1:3100/login. Defaults: Next.js 3100; Python 8100. For other
 
 If dependencies are missing: `npm ci` and `python -m pip install -e ".[api]"` in the same folder. The startup script checks that local Node dependencies exist. This project does not require new Supabase npm packages for local review mode.
 
-Initial IDs: ADMIN, HOD-CSAI, AK (Amit K), SV (Sneha V), DK (Dheeraj K), PS (Pooja S), PARTH. Passwords are generated locally in `data/local-publication/REVIEW_CREDENTIALS.txt`. Do not commit this directory or put its contents in slides. Passwords are stored as salted scrypt hashes; login sessions are signed, HTTP-only cookies. Sign out to switch accounts. No public account signup exists.
+Sign-in: students enter a USN (`01FE24BCI` + 3 digits, e.g. `01FE24BCI062`, no password). Faculty (Amit K, Sneha V, Dheeraj K, Pooja S), HOD (Department HOD) and Admin use password `123`. Sessions are signed, HTTP-only cookies. Sign out to switch accounts.
 
 `STOP_REVIEW.ps1` stops the process trees recorded by the startup script. If running manually, keep both terminals open and stop them with Ctrl+C.
 
@@ -29,7 +29,6 @@ python -m uvicorn api.main:app --host 127.0.0.1 --port 8100
 ```powershell
 # Frontend
 cd "C:\Users\parth\OneDrive\Documents\ChatGPT\MINI_PROJECT\parth-dashboard-work"
-node scripts/init-review.cjs
 $env:ALGORITHM_ENGINE_URL="http://127.0.0.1:8100"
 npm run dev -- --hostname 127.0.0.1 --port 3100
 ```

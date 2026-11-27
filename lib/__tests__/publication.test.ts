@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { EMPTY_PUBLICATION, parsePublicationCsv, parseResourceCsv, validatePublication, type PublicationState } from "../publishedTimetable";
 const memory = vi.hoisted(() => ({ state: null as PublicationState | null }));
 vi.mock("../publicationStore", () => ({ readPublication: () => structuredClone(memory.state), savePublication: (state: PublicationState) => { memory.state = structuredClone(state); } }));
-vi.mock("../localAuth",()=>({identityFromCookie:(cookie:string)=>cookie?JSON.parse(cookie):null,provisionStaff:vi.fn(),mapStudent:vi.fn()}));
+vi.mock("../localAuth",()=>({identityFromCookie:(cookie:string)=>cookie?JSON.parse(cookie):null,provisionStaff:vi.fn(),mapStudents:vi.fn()}));
 vi.mock("../workflowBridge",()=>({workflowCall:async(actor:{role:string},action:string)=>{
  if(action==='publish')return {ok:true};
  const approved=memory.state?.approved;const all=approved?.rows||[];
@@ -17,10 +17,10 @@ beforeEach(() => { memory.state = structuredClone(EMPTY_PUBLICATION); });
 describe("Static timetable publication", () => {
   it("keeps uploaded drafts invisible until approval and filters personal views", async () => {
     expect((await post({ role: "admin", action: "upload", csv })).status).toBe(200);
-    let student = await (await GET(new Request("http://localhost/api/publication?role=student",{headers:{cookie:JSON.stringify({id:"PARTH",role:"student"})}}))).json();
+    let student = await (await GET(new Request("http://localhost/api/publication?role=student",{headers:{cookie:JSON.stringify({id:"01FE24BCI062",role:"student"})}}))).json();
     expect(student.draft).toBeNull(); expect(student.approved).toBeNull();
     expect((await post({ role: "hod", action: "approve", draftId: memory.state!.draft!.id })).status).toBe(200);
-    student = await (await GET(new Request("http://localhost/api/publication?role=student",{headers:{cookie:JSON.stringify({id:"PARTH",role:"student"})}}))).json();
+    student = await (await GET(new Request("http://localhost/api/publication?role=student",{headers:{cookie:JSON.stringify({id:"01FE24BCI062",role:"student"})}}))).json();
     expect(student.approved.rows.map((r: { entry_id: string }) => r.entry_id)).toEqual(["E1"]);
     expect(student.occupancy).toHaveLength(2);
     const faculty = await (await GET(new Request("http://localhost/api/publication?role=faculty",{headers:{cookie:JSON.stringify({id:"AK",role:"faculty"})}}))).json();

@@ -1,30 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { DEMO_FACULTY } from "@/lib/demoFaculty";
+import { DEMO_FACULTY, STAFF_ACCOUNTS, isUsn, normalizeUsn } from "@/lib/demoFaculty";
 
 const roles = [
   { id: "student", label: "Student" },
   { id: "faculty", label: "Faculty" },
   { id: "hod", label: "HOD" },
+  { id: "admin", label: "Admin" },
 ] as const;
-type DemoRole = (typeof roles)[number]["id"];
+type LoginRole = (typeof roles)[number]["id"];
+
+const accountFor = (role: "hod" | "admin") => STAFF_ACCOUNTS.find(a => a.role === role)!;
 
 export default function DemoLogin() {
-  const [role, setRole] = useState<DemoRole>("student");
+  const [role, setRole] = useState<LoginRole>("student");
+  const [usn, setUsn] = useState("");
   const [facultyId, setFacultyId] = useState<string>(DEMO_FACULTY[0].id);
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const label = roles.find(item => item.id === role)!.label;
 
   async function enter() {
-    setBusy(true);
     setError("");
+    if (role === "student" && !isUsn(usn)) { setError("Enter a valid USN, for example 01FE24BCI062."); return; }
+    setBusy(true);
     try {
+      const id = role === "faculty" ? facultyId : role === "student" ? undefined : accountFor(role).id;
       const response = await fetch("/api/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ demoRole: role, facultyId: role === "faculty" ? facultyId : undefined }),
+        body: JSON.stringify(role === "student" ? { role, usn: normalizeUsn(usn) } : { role, id, password }),
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
@@ -44,17 +51,28 @@ export default function DemoLogin() {
         <div className="portal-role-buttons" role="group" aria-label="Choose your role">
           {roles.map(item => <button key={item.id} type="button" disabled={busy}
             aria-pressed={role === item.id}
-            onClick={() => { setRole(item.id); setError(""); }}>{item.label}</button>)}
+            onClick={() => { setRole(item.id); setError(""); setPassword(""); }}>{item.label}</button>)}
         </div>
-        {role === "faculty" ? <div className="portal-account">
-          <label htmlFor="portal-teacher">Teacher</label>
-          <select id="portal-teacher" value={facultyId} disabled={busy} onChange={event => setFacultyId(event.target.value)}>
-            {DEMO_FACULTY.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
-          </select>
-        </div> : <div className="portal-account">
-          <label htmlFor="portal-demo-account">Demo account ID</label>
-          <input id="portal-demo-account" value={role === "student" ? "PARTH" : "HOD-CSAI"} readOnly />
-        </div>}
+        {role === "student" ? <div className="portal-account">
+          <label htmlFor="portal-usn">USN</label>
+          <input id="portal-usn" value={usn} disabled={busy} placeholder="01FE24BCI062" autoComplete="username"
+            onChange={event => setUsn(event.target.value)} />
+        </div> : <>
+          {role === "faculty" ? <div className="portal-account">
+            <label htmlFor="portal-teacher">Teacher</label>
+            <select id="portal-teacher" value={facultyId} disabled={busy} onChange={event => setFacultyId(event.target.value)}>
+              {DEMO_FACULTY.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+            </select>
+          </div> : <div className="portal-account">
+            <label htmlFor="portal-account-name">{label}</label>
+            <input id="portal-account-name" value={accountFor(role).name} readOnly />
+          </div>}
+          <div className="portal-account">
+            <label htmlFor="portal-password">Password</label>
+            <input id="portal-password" type="password" value={password} disabled={busy} autoComplete="current-password"
+              onChange={event => setPassword(event.target.value)} />
+          </div>
+        </>}
         <button type="submit" className="portal-submit" disabled={busy}>
           {busy ? "Signing in…" : `Sign in as ${label} →`}
         </button>

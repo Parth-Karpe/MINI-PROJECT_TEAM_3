@@ -29,6 +29,7 @@ export function Nav() {
   const links = user ? [
     { href: base, label: "Overview" },
     ...dashboardPages[user.role].map(page => ({ href: base + "/" + page.id, label: page.label })),
+    ...(user.role === "hod" ? [{ href: base + "/stats", label: "Department stats" }] : []),
   ] : [];
   return <nav className="dashboard-nav" aria-label="Main navigation">
     <div className="dashboard-nav-brand"><h2>Smart Campus</h2><p>CSE (AI)</p></div>

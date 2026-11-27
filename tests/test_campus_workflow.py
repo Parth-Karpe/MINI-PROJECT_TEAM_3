@@ -11,7 +11,7 @@ HOD=dict(id='HOD',name='HOD',role='hod')
 AK=dict(id='AK',name='Amit K',role='faculty',facultyId='AK')
 SV=dict(id='SV',name='Sneha V',role='faculty',facultyId='SV')
 DK=dict(id='DK',name='Dheeraj K',role='faculty',facultyId='DK')
-STUDENT=dict(id='PARTH',name='Parth',role='student',semester=5,section='A',batch='A1')
+STUDENT=dict(id='01FE24BCI062',name='Parth',role='student',semester=5,section='A',batch='A1')
 def row(id,day,start,end,faculty,room,semester='5',section='A',batch='',course='C1',kind='theory',rtype='classroom'):
     return dict(entry_id=id,day=day,start_time=start,end_time=end,branch='CSE-AI',semester=semester,section=section,batch=batch,course_code=course,course_name=course,session_type=kind,faculty_id=faculty,faculty_name=faculty,room_id=room,expected_students=24,room_type=rtype,room_capacity=60)
 ROWS=[row('A','Mon','09:00','10:00','AK','R1'),row('B','Mon','10:15','11:15','SV','R1',course='C2'),row('C','Tue','09:00','10:00','DK','R2',semester='3'),row('D','Tue','11:15','13:15','AK','LAB6',batch='A1',course='DL',kind='lab',rtype='lab'),row('E','Wed','11:15','13:15','SV','LAB7',batch='A2',course='DL',kind='lab',rtype='lab'),row('F','Thu','09:00','10:00','AK','R3',semester='1'),row('G','Fri','09:00','10:00','AK','HALL',semester='7',kind='project',rtype='hall')]
@@ -149,7 +149,7 @@ def test_individual_students_can_book_different_machines_concurrently(engine):
     two=request(engine,actor=second,kind='workstation',date='2026-11-09',start='15:00',end='16:00',room_id='M6')
     engine.execute(HOD,'resolve',{})
     assert find(engine,one)['status']==find(engine,two)['status']=='approved'
-    assert all(not r.get('individual') or r['individual']=='PARTH' for r in view(engine,STUDENT)['rows'])
+    assert all(not r.get('individual') or r['individual']=='01FE24BCI062' for r in view(engine,STUDENT)['rows'])
 
 def test_all_day_absence_blocks_new_teaching_and_can_restore(engine):
     id=request(engine,kind='absence',all_day=True);engine.execute(HOD,'approve',dict(id=id))
