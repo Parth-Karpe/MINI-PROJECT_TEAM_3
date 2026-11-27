@@ -635,19 +635,6 @@ a.ov-card:hover{border-color:var(--ac);box-shadow:0 6px 18px rgba(36,84,230,.12)
 .ov-select select{width:auto;min-width:200px}
 
 /* HOD timetable in the same theme */
-.rd-hod .weekly-grid{background:#fff;color:var(--tx);border:1px solid var(--bd)}
-.rd-hod .weekly-grid th,.rd-hod .weekly-grid td{border:1px solid #D5DFF1!important}
-.rd-hod .weekly-grid thead th{background:var(--p2)!important;color:var(--tx)!important}
-.rd-hod .weekly-grid tbody th{background:var(--bg);color:var(--tx)}
-.rd-hod .weekly-grid small{color:var(--mu)!important}
-.rd-hod .weekly-grid .weekly-session{background:#fff}
-.rd-hod .weekly-grid .weekly-break{background:#EEF2F9;color:var(--mu)}
-.rd-hod .weekly-grid .weekly-free{background:#FAFBFE}
-.rd-hod .weekly-grid .weekly-completed,.rd-hod .weekly-legend .weekly-completed{background:#EEF1F6;color:#4A5568}
-.rd-hod .weekly-grid .weekly-running,.rd-hod .weekly-legend .weekly-running{background:#FFE9B3;color:#5A3B00}
-.rd-hod .weekly-grid .weekly-upcoming,.rd-hod .weekly-legend .weekly-upcoming{background:var(--p2);color:var(--ac-strong)}
-.rd-hod .weekly-grid .weekly-conflict{background:#FFE4E1;color:var(--bad)}
-.rd-hod .weekly-expandable summary::marker{color:var(--ac)}
 
 /* Faculty and student overview: Today + attention lists */
 .ov-split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
@@ -694,11 +681,13 @@ a.ov-card:hover{border-color:var(--ac);box-shadow:0 6px 18px rgba(36,84,230,.12)
 @media(max-width:420px){.ov-cards-6{grid-template-columns:minmax(0,1fr)}}
 
 .ds.ds-embedded{padding:0;max-width:none;margin:0}
-.ds-embed-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px 16px;margin:4px 0 0}
+.ds-embed-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:6px 16px;margin:4px 0 0}
 .ds-embed-head .ds-muted{font-size:12.5px}
 .ds-embed-head a{color:var(--ac);font-weight:600;text-decoration:none}
 .ds-embed-head a:hover{text-decoration:underline}
 .ds-embedded .ds-kpis{margin:12px 0 16px;gap:12px}
+.ds-embedded .ds-kpis-6{grid-template-columns:repeat(6,minmax(0,1fr))}
+@media(max-width:1100px){.ds-embedded .ds-kpis-6{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .ds-embedded .ds-kpi{padding:13px 15px;gap:12px}
 .ds-embedded .ov-charts{margin-bottom:16px}
 .ds-embedded .ov-charts .rd-panel{padding:18px 20px}
@@ -715,3 +704,9 @@ a.ov-card:hover{border-color:var(--ac);box-shadow:0 6px 18px rgba(36,84,230,.12)
 .hod-block-title::before{content:"";width:4px;height:18px;border-radius:2px;background:var(--ac)}
 .hod-block>.rd-panel,.hod-block>p{margin:14px 0}
 .hod-block .rd-panel h2{font-size:16px}
+
+/* Dashboard heading: higher on the page and bolder; on HOD pages it sits in a card. */
+.rd-dashboard{padding-top:14px}
+.rd-header h1{font-weight:800;margin:0 0 2px}
+.rd-header p{margin:0}
+.rd-hod .rd-header{background:var(--panel);border:1px solid var(--bd);border-radius:14px;padding:16px 22px;box-shadow:0 1px 2px rgba(16,24,40,.04)}

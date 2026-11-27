@@ -4,7 +4,7 @@ import type { StaffRecord, StaffRole } from "@/lib/staffRegistry";
 export function StaffImport({ records, onSaved }: { records: StaffRecord[]; onSaved: () => void }) {
   const [role,setRole]=useState<StaffRole>('faculty'),[file,setFile]=useState<File|null>(null),[preview,setPreview]=useState<StaffRecord[]>([]),[csv,setCsv]=useState(''),[message,setMessage]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('');
   const invalidate=()=>{setPreview([]);setCsv('');setMessage('');setError('');};
-  function template(){const text=role==='faculty'?'id,name\nAK,Amit K\nSV,Sneha V\n':'id,name\nHOD-CSAI,Department HOD\n';const url=URL.createObjectURL(new Blob([text],{type:'text/csv'}));const a=document.createElement('a');a.href=url;a.download=`${role}_template.csv`;a.click();URL.revokeObjectURL(url);}
+  function template(){const text=role==='faculty'?'id,name\nAK,Amit K\nSV,Sneha V\n':'id,name\nHOD-CSAI,Dr. Narayan D G\n';const url=URL.createObjectURL(new Blob([text],{type:'text/csv'}));const a=document.createElement('a');a.href=url;a.download=`${role}_template.csv`;a.click();URL.revokeObjectURL(url);}
   async function submit(importNow:boolean){setBusy(true);setError('');setMessage('');try{
     if(!importNow&&(!file||file.size>500000))throw new Error('Choose a CSV smaller than 500 KB.');
     const text=importNow?csv:await file!.text();

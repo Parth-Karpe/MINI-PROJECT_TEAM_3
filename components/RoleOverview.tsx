@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DAYS, facultyIds, minutes, validatePublication, type PublishedSession, type Role, type Submission } from "@/lib/publishedTimetable";
+import { DAYS, minutes, type PublishedSession, type Role, type Submission } from "@/lib/publishedTimetable";
 import { WeeklyTimetable, timetableStatus } from "./WeeklyTimetable";
 import { REQUEST_LABELS } from "./FacultyRequests";
 import { DeptStats } from "./stats/DeptStats";
@@ -15,7 +15,6 @@ interface OverviewData {
   utilization: Record<string, number>; draft: Submission | null; publication: (Submission & { term_start?: string; term_end?: string }) | null;
 }
 
-const OPEN_FOR_HOD = ["pending_hod", "waitlisted"];
 const OPEN = ["pending_hod", "pending_consent", "waitlisted"];
 const STATUS_TEXT: Record<string, string> = {
   pending_hod: "Waiting for HOD", pending_consent: "Waiting for faculty consent", waitlisted: "Waitlisted",
@@ -46,11 +45,6 @@ function useOverview(date: string) {
 }
 
 /* ───────────── shared pieces ───────────── */
-
-function Card({ label, value, note, href, tone = "plain" }: { label: string; value: string; note?: string; href?: string; tone?: "plain" | "attention" | "good" }) {
-  const body = <><small>{label}</small><strong>{value}</strong>{note && <span>{note}</span>}</>;
-  return href ? <Link href={href} className={`ov-card ov-${tone}`}>{body}</Link> : <div className={`ov-card ov-${tone}`}>{body}</div>;
-}
 
 function groupOf(row: PublishedSession) {
   return `Sem ${row.semester} ${row.section}${row.batch ? " / " + row.batch : ""}`;
@@ -169,51 +163,30 @@ export function RoomUtilChart({ utilization, resources }: { utilization: Record<
 
 /** The published department timetable: every class, one sheet each (semester · division), no selection needed. */
 export function DepartmentTimetable({ rows, clock }: { rows: PublishedSession[]; clock: string }) {
-  const classes = new Set(rows.map(r => `${r.semester}:${r.section}`)).size;
   return <section className="rd-panel ov-timetable" aria-labelledby="ov-tt-title">
     <div className="ov-panel-head">
       <h2 id="ov-tt-title">Department timetable</h2>
-      {rows.length > 0 && <span className="ov-muted">{classes} class{classes === 1 ? "" : "es"} · {rows.length} sessions a week · select a period for its details</span>}
     </div>
     {!rows.length ? <p className="rd-empty">No published timetable yet. It appears here after you approve a draft in Scheduling → Timetable review.</p>
       : <WeeklyTimetable rows={rows} clock={clock} expandable />}
   </section>;
 }
 
-function HodOverview({ data, clock, date }: { data: OverviewData; clock: string; date: string }) {
-  const base = "/dashboards/hod";
-  const pendingHod = data.requests.filter(r => OPEN_FOR_HOD.includes(r.status));
-  const awaitingConsent = data.requests.filter(r => r.status === "pending_consent").length;
+function HodOverview({ data, clock }: { data: OverviewData; clock: string }) {
   const now = minutes(clock.slice(11, 16) || "00:00");
   const today = [...data.rows].sort(byStart);
-  const left = today.filter(r => timetableStatus(r, clock, date) !== "completed");
   const teachingHours = now >= 480 && now < 1020;
   const rooms = data.resources.filter(r => r.type !== "workstation" && !r.parent);
   const busy = new Set(today.filter(r => minutes(r.start_time) <= now && now < minutes(r.end_time)).map(r => r.room_id));
   const free = rooms.filter(r => !busy.has(r.id)).length;
-  const draftFindings = data.draft?.findings.length ?? null;
-  const publishedFindings = data.publication ? validatePublication(data.publication.rows).length : 0;
-  const conflicts = draftFindings ?? publishedFindings;
-  const faculty = new Set(today.flatMap(facultyIds)).size;
   const weekly = data.publication?.rows || [];
 
   return <>
-    <section className="ov-cards ov-cards-6" aria-label="Department summary">
-      <Card label="Pending approvals" value={String(pendingHod.length + (data.draft ? 1 : 0))} href={`${base}/inbox`} tone={pendingHod.length || data.draft ? "attention" : "good"}
-        note={[pendingHod.length ? `${pendingHod.length} request${pendingHod.length === 1 ? "" : "s"}` : "No requests waiting", data.draft ? "timetable draft to review" : "", awaitingConsent ? `${awaitingConsent} awaiting faculty consent` : ""].filter(Boolean).join(" · ")} />
-      <Card label="Today's scheduled classes" value={data.published ? String(today.length) : "–"} href={`${base}/timetable`}
-        note={!data.published ? "Timetable not published" : !today.length ? "No classes today" : left.length ? `${left.length} still to run` : "All finished for today"} />
-      <Card label="Available rooms now" value={!rooms.length || !teachingHours ? "–" : String(free)} href={`${base}/availability`}
-        note={!rooms.length ? "No rooms registered yet" : teachingHours ? `${busy.size} in use · ${rooms.length} rooms in total` : `Outside teaching hours · ${rooms.length} rooms in total`} />
-      <Card label="Timetable conflicts" value={data.draft || data.publication ? String(conflicts) : "–"} href={`${base}/review`} tone={conflicts ? "attention" : "good"}
-        note={data.draft ? (conflicts ? "In the draft awaiting review" : "Draft passes overlap checks") : data.publication ? (conflicts ? "In the published timetable" : "Published timetable is clean") : "No timetable uploaded"} />
-      <Card label="Publication status" value={data.publication ? "Published" : "Not published"} href={`${base}/review`} tone={data.publication ? "good" : "plain"}
-        note={data.publication?.approvedAt ? `Approved ${new Date(data.publication.approvedAt).toLocaleDateString()}` : data.draft ? "A draft is waiting for review" : "Waiting for the admin upload"} />
-      <Card label="Faculty teaching today" value={data.published ? String(faculty) : "–"} href={`${base}/stats`}
-        note={!data.published ? "Timetable not published" : faculty ? "Open department stats for workload" : "No one is teaching today"} />
-    </section>
     {/* Department stats shown in place: KPI strip, the two charts, week at a glance and "What to look at". */}
-    <DeptStats embedded>
+    <DeptStats embedded roomsNow={{
+      value: !rooms.length || !teachingHours ? "–" : String(free),
+      note: !rooms.length ? "No rooms registered yet" : teachingHours ? `${busy.size} in use · ${rooms.length} rooms in total` : `Outside teaching hours · ${rooms.length} rooms in total`,
+    }}>
       <div className="ov-charts">
         <WeeklySessionsChart rows={weekly} />
         <RoomUtilChart utilization={data.utilization} resources={data.resources} />
@@ -267,7 +240,7 @@ export function RoleOverview({ role, clock, userId, facultyId }: { role: Role; c
   if (!data || !clock) return <p className="ov-loading" role="status">Loading today’s overview…</p>;
   return <>
     {error && <p role="alert" className="rd-error">Showing the last loaded data. {error}</p>}
-    {role === "hod" ? <HodOverview data={data} clock={clock} date={date} />
+    {role === "hod" ? <HodOverview data={data} clock={clock} />
       : <PersonalOverview data={data} clock={clock} date={date} role={role} userId={userId} facultyId={facultyId} />}
   </>;
 }

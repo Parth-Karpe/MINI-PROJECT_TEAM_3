@@ -1,6 +1,6 @@
 export const CLASS_GROUPS = ["A", "A1", "A2", "B", "B1", "B2"];
 export const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-export const DEMO_USERS = { admin: { name: "Department Admin", id: "ADMIN-DEMO" }, hod: { name: "HOD · CSE (AI)", id: "HOD-DEMO" }, faculty: { name: "Amit K", id: "AK" }, student: { name: "Parth Karpe", id: "01FE24BCI062" } };
+export const DEMO_USERS = { admin: { name: "Department Admin", id: "ADMIN-DEMO" }, hod: { name: "Dr. Narayan D G", id: "HOD-DEMO" }, faculty: { name: "Amit K", id: "AK" }, student: { name: "Parth Karpe", id: "01FE24BCI062" } };
 export type Role = keyof typeof DEMO_USERS;
 export interface PublishedSession {
   entry_id: string; day: string; start_time: string; end_time: string;

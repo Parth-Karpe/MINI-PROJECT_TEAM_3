@@ -64,7 +64,7 @@ export function Nav() {
   return <nav className="dashboard-nav" aria-label="Main navigation">
     <div className="dashboard-nav-brand"><h2>Smart Campus</h2><p>CSE (AI)</p></div>
     {user ? <>
-      <p className="dashboard-nav-account">{user.name}<small>{user.id} · {user.role.toUpperCase()}</small></p>
+      {user.role !== "hod" && <p className="dashboard-nav-account">{user.name}<small>{user.id} · {user.role.toUpperCase()}</small></p>}
       <div className="dashboard-nav-links">{links}</div>
       <div className="dashboard-nav-footer">
         {showClock && <DashboardClock {...clock} />}

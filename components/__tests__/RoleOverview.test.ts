@@ -62,7 +62,7 @@ describe("HOD overview charts", () => {
     expect(html).toContain("Division A");
     expect(html).toContain("Division B");
     expect(html).not.toContain("<select");
-    expect(html).toContain("2 classes");
+    expect(html).not.toContain("sessions a week");
     expect(html).toContain("<details>");
   });
 });

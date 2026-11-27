@@ -14,7 +14,7 @@ export interface StaffAccount { id: string; name: string; role: StaffRole; facul
 
 export const STAFF_ACCOUNTS: readonly StaffAccount[] = [
   { id: "ADMIN", name: "Department Admin", role: "admin" },
-  { id: "HOD-CSAI", name: "Department HOD", role: "hod" },
+  { id: "HOD-CSAI", name: "Dr. Narayan D G", role: "hod" },
   ...DEMO_FACULTY.map(f => ({ id: f.id, name: f.name, role: "faculty" as const, facultyId: f.id })),
 ];
 
