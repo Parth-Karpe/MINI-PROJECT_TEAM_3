@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, CalendarDays, CircleCheck, Clock, Download, TriangleAlert, OctagonAlert } from "lucide-react";
 import type { CsvResource, PublishedSession } from "@/lib/publishedTimetable";
 import { ALL, DAY_FULL, WEEK_ROOM_HOURS, clock, computeDeptStats, exportTable, filterOptions, fmtHours, toCsv, type Tab } from "@/lib/deptStats";
@@ -9,6 +10,7 @@ import { FacultyTab } from "./FacultyTab";
 import { ClassesTab } from "./ClassesTab";
 import { RoomsTab } from "./RoomsTab";
 import { Ring, Tabs, TipLayer, tip, type Tone } from "./ui";
+import { HodSectionTabs } from "../HodSectionTabs";
 import "./stats.css";
 
 interface Loaded { rows: PublishedSession[]; resources: CsvResource[]; approvedAt?: string }
@@ -22,8 +24,15 @@ function Kpi({ visual, value, label, note, tipText, tone = "accent" }: { visual:
   );
 }
 
-export function DeptStats() {
+/**
+ * Department statistics. On Reports & stats it is the full page with filters, tabs and export.
+ * `embedded` is the compact version for the HOD Overview: the KPI strip, `children` (extra charts),
+ * then the week-at-a-glance heatmap and the "What to look at" chips, always for the whole department.
+ * A chip there opens the matching detail on the full page.
+ */
+export function DeptStats({ embedded = false, children }: { embedded?: boolean; children?: React.ReactNode } = {}) {
   const root = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   const [data, setData] = useState<Loaded | null>(null);
   const [error, setError] = useState("");
   const [tab, setTab] = useState<Tab>("overview");
@@ -39,6 +48,13 @@ export function DeptStats() {
       setError("");
     } catch (e) { setError(e instanceof Error ? e.message : "Could not load statistics."); }
   }, []);
+  // The full page accepts ?tab=faculty&id=AK, so a chip on the Overview can open its detail here.
+  useEffect(() => {
+    if (embedded) return;
+    const q = new URLSearchParams(window.location.search);
+    const t = q.get("tab") as Tab | null;
+    if (t && ["overview", "faculty", "classes", "rooms"].includes(t)) { setTab(t); const id = q.get("id"); if (id) setOpen({ tab: t, id }); }
+  }, [embedded]);
   useEffect(() => {
     void load();
     const onVisible = () => { if (document.visibilityState === "visible") void load(); };
@@ -53,7 +69,10 @@ export function DeptStats() {
   const filtered = filters.semester !== ALL || filters.section !== ALL;
   const onOpen = useCallback((id: string | null) => setOpen(id ? { tab, id } : null), [tab]);
 
-  function pick(target: { tab: Tab; id?: string }) { setTab(target.tab); setOpen(target.id ? { tab: target.tab, id: target.id } : null); }
+  function pick(target: { tab: Tab; id?: string }) {
+    if (embedded) { router.push(`/dashboards/hod/stats?tab=${target.tab}${target.id ? `&id=${encodeURIComponent(target.id)}` : ""}`); return; }
+    setTab(target.tab); setOpen(target.id ? { tab: target.tab, id: target.id } : null);
+  }
   function changeTab(next: Tab) { setTab(next); setOpen(null); }
   function download() {
     if (!stats) return;
@@ -71,8 +90,11 @@ export function DeptStats() {
   const openFor = (t: Tab) => (open?.tab === t ? open.id : null);
 
   return (
-    <div className="ds" ref={root}>
-      <header className="ds-head">
+    <div className={`ds${embedded ? " ds-embedded" : ""}`} ref={root}>
+      {embedded ? <div className="ds-embed-head">
+        <h2 className="ds-panel-title">Department statistics</h2>
+        <span className="ds-muted">Whole department · published timetable, Mon to Sat, 08:00–17:00{data?.approvedAt ? ` · approved ${new Date(data.approvedAt).toLocaleDateString()}` : ""} · <Link href="/dashboards/hod/stats">Full detail in Reports &amp; stats →</Link></span>
+      </div> : <header className="ds-head">
         <div>
           <Link href="/dashboards/hod" className="ds-back"><ArrowLeft size={14} />HOD dashboard</Link>
           <h1 className="ds-title">Department stats</h1>
@@ -89,11 +111,12 @@ export function DeptStats() {
             </select></label>
           <button type="button" className="ds-btn" onClick={download} disabled={!stats || !data?.rows.length} {...tip(`Download the ${tab} view as CSV\nUses the current semester and section`)}><Download size={14} />Export</button>
         </div>
-      </header>
+      </header>}
 
+      {!embedded && <HodSectionTabs page="stats" />}
       {error && <p role="alert" className="ds-error">{error} <button type="button" className="ds-link" onClick={() => void load()}>Try again</button></p>}
       {!data && !error && <div className="ds-skeleton" aria-busy="true" aria-label="Loading statistics"><span /><span /><span /><span /><span /></div>}
-      {data && !data.rows.length && <div className="ds-panel ds-blank"><h2 className="ds-panel-title">No published timetable yet</h2><p className="ds-muted">Statistics appear after you approve and publish a timetable on the HOD dashboard.</p><Link href="/dashboards/hod" className="ds-btn">Back to the dashboard</Link></div>}
+      {data && !data.rows.length && <div className="ds-panel ds-blank"><h2 className="ds-panel-title">No published timetable yet</h2><p className="ds-muted">Statistics appear after you approve and publish a timetable on the HOD dashboard.</p>{embedded ? <p className="ds-muted">Approve a draft in Scheduling → Timetable review to see them here.</p> : <Link href="/dashboards/hod" className="ds-btn">Back to the dashboard</Link>}</div>}
 
       {stats && data && data.rows.length > 0 && <>
         <section className="ds-kpis" aria-label="Summary">
@@ -114,6 +137,10 @@ export function DeptStats() {
             visual={<span className="ds-kpi-icon">{a?.count ? (a.severity === "problem" ? <OctagonAlert size={22} /> : <TriangleAlert size={22} />) : <CircleCheck size={22} />}</span>} />
         </section>
 
+        {embedded ? <>
+          {children}
+          <div className="ds-view"><OverviewTab stats={stats} onPick={pick} /></div>
+        </> : <>
         <Tabs label="Statistics sections" value={tab} onChange={changeTab} items={[
           { id: "overview", label: "Overview" }, { id: "faculty", label: "Faculty", count: stats.faculty.list.length },
           { id: "classes", label: "Classes", count: stats.classes.length }, { id: "rooms", label: "Rooms", count: stats.rooms.length },
@@ -124,6 +151,7 @@ export function DeptStats() {
           {tab === "classes" && <ClassesTab stats={stats} openId={openFor("classes")} onOpen={onOpen} />}
           {tab === "rooms" && <RoomsTab stats={stats} openId={openFor("rooms")} onOpen={onOpen} filtered={filtered} />}
         </div>
+        </>}
       </>}
       <TipLayer root={root} />
     </div>

@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { Identity } from "@/lib/localAuth";
 import { DashboardClock, useDashboardClock } from "./DashboardClock";
-import { dashboardPages } from "@/lib/dashboardPages";
+import { dashboardPages, hodSections, type DashboardSection } from "@/lib/dashboardPages";
+
+type NavLink = { href: string; label: string };
 
 export function Nav() {
   const path = usePathname();
@@ -26,19 +28,34 @@ export function Nav() {
   if (path === "/login") return null;
 
   const base = user ? "/dashboards/" + user.role : "";
-  const links = user ? [
-    { href: base, label: "Overview" },
-    ...dashboardPages[user.role].map(page => ({ href: base + "/" + page.id, label: page.label })),
-    ...(user.role === "hod" ? [{ href: base + "/stats", label: "Department stats" }] : []),
-  ] : [];
+  const pageLabel = (id: DashboardSection) => user ? dashboardPages[user.role].find(page => page.id === id)?.label ?? id : id;
+  const linkTo = (target: "overview" | "stats" | DashboardSection, label?: string): NavLink => ({
+    href: target === "overview" ? base : base + "/" + target,
+    label: label ?? (target === "overview" ? "Overview" : target === "stats" ? "Department stats" : pageLabel(target)),
+  });
+  const renderLink = (link: NavLink) => <Link key={link.href} href={link.href} className={path === link.href ? "on" : undefined}
+    aria-current={path === link.href ? "page" : undefined}>{link.label}</Link>;
+
+  let links: React.ReactNode = null;
+  if (user?.role === "hod") {
+    // Four sections; a section is selected while any of its pages is open.
+    links = hodSections.map(section => {
+      const href = section.pages.length ? `${base}/${section.pages[0]}` : base;
+      const on = section.pages.length ? section.pages.some(p => path === `${base}/${p}`) : path === base;
+      return <Link key={section.id} href={href} className={on ? "on" : undefined} aria-current={on ? "page" : undefined}>{section.label}</Link>;
+    });
+  } else if (user) {
+    links = <>
+      {[linkTo("overview"), ...dashboardPages[user.role].map(page => linkTo(page.id, page.label))].map(renderLink)}
+      {user.role === "admin" && <Link href={base + "#imports"}>CSV imports</Link>}
+    </>;
+  }
+
   return <nav className="dashboard-nav" aria-label="Main navigation">
     <div className="dashboard-nav-brand"><h2>Smart Campus</h2><p>CSE (AI)</p></div>
     {user ? <>
       <p className="dashboard-nav-account">{user.name}<small>{user.id} · {user.role.toUpperCase()}</small></p>
-      <div className="dashboard-nav-links">{links.map(link =>
-        <Link key={link.href} href={link.href} className={path === link.href ? "on" : undefined}
-          aria-current={path === link.href ? "page" : undefined}>{link.label}</Link>
-      )}{user.role === "admin" && <Link href={base + "#imports"}>CSV imports</Link>}</div>
+      <div className="dashboard-nav-links">{links}</div>
       <div className="dashboard-nav-footer">
         {showClock && <DashboardClock {...clock} />}
         <button type="button" className="dashboard-nav-signout" onClick={async () => {

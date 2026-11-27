@@ -40,7 +40,7 @@ export function CampusWorkflows({role,section,facultyId,userId,clock}:{role:Role
      <button type="button" onClick={refresh}>Refresh schedule</button>
    </div>
    {view?.date === date ? view.published ?
-     <WeeklyTimetable rows={view.rows} clock={clock} occurrenceDate={date} compact={role === "student"}
+     <WeeklyTimetable rows={view.rows} clock={clock} occurrenceDate={date} compact={role === "student"} expandable={role === "student" || role === "hod"}
        visibleDay={new Date(date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short" })} />
      : <p>HOD must publish the timetable first.</p> : !loadError && <p>Loading selected date…</p>}
  </section>}

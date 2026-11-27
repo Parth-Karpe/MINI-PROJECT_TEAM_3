@@ -24,12 +24,17 @@ function shortCourse(row: PublishedSession) {
   return words.filter(word => !/^(and|for|of|the|lab)$/i.test(word)).map(word => word[0].toUpperCase()).join("") || row.course_code;
 }
 
-export function WeeklyTimetable({ rows, visibleDay, clock, occurrenceDate, compact = false }: {
+/**
+ * `compact` is the narrow student layout. `expandable` (always on when compact) turns each period into a
+ * disclosure: the triangle summary shows the essentials and selecting it reveals the full details.
+ */
+export function WeeklyTimetable({ rows, visibleDay, clock, occurrenceDate, compact = false, expandable = compact }: {
   rows: PublishedSession[];
   visibleDay?: string;
   clock?: string;
   occurrenceDate?: string;
   compact?: boolean;
+  expandable?: boolean;
 }) {
   if (!rows.length) return <p className="rd-empty">{visibleDay ? "No sessions on this date." : "No matching sessions."}</p>;
   const groups = [...new Set(rows.map(row => `${row.semester}:${row.section}`))].sort();
@@ -50,7 +55,7 @@ export function WeeklyTimetable({ rows, visibleDay, clock, occurrenceDate, compa
       return <div className="weekly-sheet" key={group}>
         <h3>CSE (AI) · Semester {semester} · Division {section}</h3>
         <div className="rd-table-wrap" tabIndex={0} aria-label="Scroll timetable">
-          <table className={`weekly-grid${compact ? " weekly-compact" : ""}`}>
+          <table className={`weekly-grid${compact ? " weekly-compact" : ""}${compact || expandable ? " weekly-expandable" : ""}`}>
             <thead><tr><th scope="col">Day / Time</th>{bounds.slice(0, -1).map((bound, i) =>
               <th key={bound} scope="col">{label(bound)}<br />{label(bounds[i + 1])}</th>
             )}</tr></thead>
@@ -88,12 +93,12 @@ export function WeeklyTimetable({ rows, visibleDay, clock, occurrenceDate, compa
                   cells.push(<td key={i} colSpan={end - i} className={[
                     "weekly-session", status && `weekly-${status}`, conflict && "weekly-conflict",
                   ].filter(Boolean).join(" ")}>
-                    {compact ? <details>
-                      <summary aria-label={`${row.course_name || row.course_code}, ${row.room_id}${status ? ", " + statusLabels[status] : ""}`}>
-                        <strong>{shortCourse(row)}</strong>
-                        <span>{row.room_id}{row.batch && ` · ${row.batch}`}</span>
+                    {compact || expandable ? <details>
+                      <summary aria-label={`${row.course_name || row.course_code}, ${row.room_id}${compact ? "" : ", " + (row.faculty_name || row.faculty_id)}${status ? ", " + statusLabels[status] : ""}. Show details`}>
+                        <strong>{compact ? shortCourse(row) : row.course_code || shortCourse(row)}</strong>
+                        <span>{row.room_id}{row.batch && ` · ${row.batch}`}{!compact && row.faculty_id && ` · ${row.faculty_id}`}</span>
                       </summary>
-                      <small><strong>{row.course_name || row.course_code}</strong><br />{details}</small>
+                      <small><strong>{row.course_name || row.course_code}</strong>{!compact && row.course_code && row.course_name && <> ({row.course_code})</>}<br />{details}{!compact && status && <><br />{statusLabels[status]}</>}</small>
                     </details> : <>
                       <strong>{row.course_code}</strong><div>{row.course_name}</div>
                       <small>{details}{status && <><br />{statusLabels[status]}</>}</small>

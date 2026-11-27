@@ -386,9 +386,10 @@ tr:hover td:not(.weekly-grid td) {
 .weekly-grid .weekly-conflict{box-shadow:inset 0 0 0 2px #b64036}
 .weekly-grid.weekly-compact{min-width:760px}
 .weekly-grid.weekly-compact .weekly-session{min-width:60px;padding:6px!important}
-.weekly-compact summary{cursor:pointer}
-.weekly-compact summary span{display:block;font-size:10px;line-height:1.35}
-.weekly-compact summary:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.weekly-expandable summary{cursor:pointer}
+.weekly-expandable details[open]{text-align:left}
+.weekly-expandable summary span{display:block;font-size:10px;line-height:1.35}
+.weekly-expandable summary:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 
 .dashboard-nav{overflow-y:auto;gap:16px}
 .dashboard-nav-brand h2{margin:0;color:var(--ac);font-size:19px}
@@ -472,7 +473,7 @@ tr:hover td:not(.weekly-grid td) {
 }
 .portal-role-buttons {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
   gap: 9px;
   margin: 20px 0 24px;
 }
@@ -547,3 +548,161 @@ tr:hover td:not(.weekly-grid td) {
 .portal-account{margin:0 0 18px}
 .portal-account input[readonly]{background:var(--bg)}
 .portal-submit{width:100%;min-height:44px;border-radius:8px}
+
+/* ─────────── Dashboard additions in the original theme (same tokens as the login screen) ─────────── */
+:root {
+  --ac-strong: #1A3FB8;   /* darker shade of --ac for hover and selected text */
+  --nav-bg: #14284B;      /* the theme's navy (--tx) as the sidebar */
+  --nav-hover: #1E3662;
+  --nav-line: #2B4371;
+  --nav-tx: #EEF3FC;
+  --nav-mu: #AEBCD6;
+}
+
+/* Sidebar: darker than the page so it is easy to scan */
+nav.dashboard-nav{background:var(--nav-bg);border-right:1px solid var(--nav-line);color:var(--nav-tx)}
+.dashboard-nav-brand h2{color:#fff}
+.dashboard-nav-brand p{color:var(--nav-mu)!important}
+.dashboard-nav-account{color:var(--nav-tx)!important;padding-bottom:12px;border-bottom:1px solid var(--nav-line)}
+.dashboard-nav-account small{color:var(--nav-mu)}
+.dashboard-nav a{color:var(--nav-tx);border:1px solid transparent}
+.dashboard-nav a:hover{background:var(--nav-hover);color:#fff}
+.dashboard-nav a.on,.dashboard-nav a.on:hover{background:var(--p2);color:var(--ac-strong);border-color:transparent;box-shadow:inset 4px 0 0 var(--ac);font-weight:650}
+.dashboard-nav :focus-visible{outline-color:#9DB6FF}
+.dashboard-nav-signout{background:transparent;border:1px solid var(--nav-line);color:var(--nav-tx);box-shadow:none}
+.dashboard-nav-signout:hover{background:var(--nav-hover);color:#fff;filter:none}
+.dashboard-nav .sidebar-clock{border-top-color:var(--nav-line);color:var(--nav-tx)}
+.dashboard-nav .sidebar-clock h2{color:var(--nav-tx)}
+.dashboard-nav .sidebar-clock p,.dashboard-nav .sidebar-clock label{color:var(--nav-mu)}
+.dashboard-nav .sidebar-clock input{background:#fff;color:var(--tx)}
+.dashboard-nav .sidebar-clock button.sec{background:transparent;color:var(--nav-tx);border-color:var(--nav-line)}
+.dashboard-nav .sidebar-clock button.sec:hover{background:var(--nav-hover);color:#fff}
+
+/* HOD section tabs (Scheduling, Resources, Reports & stats) */
+.hod-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 4px;padding:4px;background:var(--panel);border:1px solid var(--bd);border-radius:10px;width:fit-content;max-width:100%}
+.hod-tabs a{padding:8px 14px;border-radius:7px;color:var(--mu);text-decoration:none;font-weight:550;font-size:13px}
+.hod-tabs a:hover{background:var(--p2);color:var(--tx)}
+.hod-tabs a.on{background:var(--ac);color:#fff}
+.ds .hod-tabs{margin-top:14px}
+
+/* Overview cards */
+.ov-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:24px 0 16px}
+.ov-cards-6{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ov-card{display:flex;flex-direction:column;gap:4px;padding:18px 20px;background:var(--panel);border:1px solid var(--bd);border-top:3px solid var(--ac);border-radius:12px;color:var(--tx);text-decoration:none;transition:border-color .15s,box-shadow .15s}
+a.ov-card:hover{border-color:var(--ac);box-shadow:0 6px 18px rgba(36,84,230,.12)}
+.ov-card small{color:var(--mu);font-size:12.5px}
+.ov-card strong{font-size:28px;line-height:1.1;letter-spacing:-.02em;color:var(--tx)}
+.ov-card span{color:var(--mu);font-size:12px}
+.ov-card.ov-attention{border-top-color:#C98A1B}
+.ov-card.ov-attention strong{color:var(--warn)}
+.ov-card.ov-good{border-top-color:var(--ok)}
+.ov-panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ov-panel-head h2{margin:0!important}
+.ov-panel-head a{color:var(--ac);font-weight:600;font-size:13px;text-decoration:none}
+.ov-panel-head a:hover{color:var(--ac-strong);text-decoration:underline}
+.ov-muted{color:var(--mu);font-size:12.5px}
+.ov-empty{margin:0;padding:14px;border:1px dashed var(--bd);border-radius:8px;color:var(--mu);font-size:13px}
+.ov-loading{color:var(--mu)}
+
+/* Charts: one hue (--ac), thin marks with 4px rounded ends, recessive gridlines */
+.ov-charts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:stretch}
+.ov-charts>.rd-panel{margin:0}
+.ov-cols{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;height:200px;padding:6px 0 0 28px}
+.ov-cols-grid{position:absolute;inset:6px 0 26px 28px;pointer-events:none}
+.ov-cols-grid span{position:absolute;left:0;right:0;border-top:1px solid var(--bd)}
+.ov-cols-grid em{position:absolute;left:-28px;top:-8px;width:22px;text-align:right;font-style:normal;font-size:11px;color:var(--mu);font-variant-numeric:tabular-nums}
+.ov-col{position:relative;display:grid;grid-template-rows:minmax(0,1fr) 20px;gap:6px;outline:none}
+.ov-col-well{position:relative;display:flex;align-items:flex-end;justify-content:center}
+.ov-col-bar{display:block;width:min(36px,70%);min-height:0;background:var(--ac);border-radius:4px 4px 0 0;transition:opacity .15s}
+.ov-cols:hover .ov-col-bar{opacity:.55}
+.ov-cols .ov-col:hover .ov-col-bar,.ov-col:focus-visible .ov-col-bar{opacity:1}
+.ov-col:focus-visible .ov-col-bar{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--ac)}
+.ov-col-label{position:absolute;left:0;right:0;margin-bottom:4px;text-align:center;font-size:12px;color:var(--tx)}
+.ov-col-day{text-align:center;font-size:12px;color:var(--mu)}
+.ov-tip{position:absolute;left:50%;transform:translateX(-50%);z-index:3;display:grid;gap:2px;padding:7px 10px;white-space:nowrap;font-size:12px;color:#fff;background:var(--tx);border-radius:7px;box-shadow:0 6px 18px rgba(20,40,75,.25)}
+.ov-tip strong{font-size:12px}
+.ov-hbars{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ov-hbars li{display:grid;grid-template-columns:minmax(60px,110px) minmax(0,1fr) 44px;align-items:center;gap:10px;font-size:12.5px}
+.ov-hbar-name{color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ov-hbar-well{height:12px;background:var(--p2);border-radius:4px;overflow:hidden}
+.ov-hbar{display:block;height:100%;background:var(--ac);border-radius:0 4px 4px 0}
+.ov-hbars li:hover .ov-hbar{background:var(--ac-strong)}
+.ov-hbar-val{text-align:right;color:var(--tx);font-variant-numeric:tabular-nums}
+.ov-table-view{margin-top:14px;font-size:12.5px}
+.ov-table-view summary{cursor:pointer;color:var(--ac);font-weight:600}
+.ov-timetable{margin-top:20px}
+.ov-select{display:flex!important;align-items:center;gap:8px;font-size:13px;color:var(--tx)}
+.ov-select select{width:auto;min-width:200px}
+
+/* HOD timetable in the same theme */
+.rd-hod .weekly-grid{background:#fff;color:var(--tx);border:1px solid var(--bd)}
+.rd-hod .weekly-grid th,.rd-hod .weekly-grid td{border:1px solid #D5DFF1!important}
+.rd-hod .weekly-grid thead th{background:var(--p2)!important;color:var(--tx)!important}
+.rd-hod .weekly-grid tbody th{background:var(--bg);color:var(--tx)}
+.rd-hod .weekly-grid small{color:var(--mu)!important}
+.rd-hod .weekly-grid .weekly-session{background:#fff}
+.rd-hod .weekly-grid .weekly-break{background:#EEF2F9;color:var(--mu)}
+.rd-hod .weekly-grid .weekly-free{background:#FAFBFE}
+.rd-hod .weekly-grid .weekly-completed,.rd-hod .weekly-legend .weekly-completed{background:#EEF1F6;color:#4A5568}
+.rd-hod .weekly-grid .weekly-running,.rd-hod .weekly-legend .weekly-running{background:#FFE9B3;color:#5A3B00}
+.rd-hod .weekly-grid .weekly-upcoming,.rd-hod .weekly-legend .weekly-upcoming{background:var(--p2);color:var(--ac-strong)}
+.rd-hod .weekly-grid .weekly-conflict{background:#FFE4E1;color:var(--bad)}
+.rd-hod .weekly-expandable summary::marker{color:var(--ac)}
+
+/* Faculty and student overview: Today + attention lists */
+.ov-split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+.ov-split>.rd-panel{margin:0 0 20px}
+.ov-h3{margin:16px 0 8px}
+.ov-h3:first-of-type{margin-top:4px}
+.ov-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ov-list li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--bg)}
+.ov-list li>div{display:grid;gap:2px;min-width:0}
+.ov-list li strong{font-size:13px}
+.ov-list li span,.ov-list li small{color:var(--mu);font-size:12px;overflow-wrap:anywhere}
+.ov-messages .ov-message{color:var(--tx)!important;font-size:13px!important}
+.ov-status{flex:none;font-style:normal;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--p2);color:var(--mu)}
+.ov-status-good{background:#E2F4EA;color:var(--ok)}
+.ov-status-wait{background:#FFF1D6;color:var(--warn)}
+.ov-status-bad{background:#FDE7E5;color:var(--bad)}
+.ov-schedule{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ov-slot{display:grid;grid-template-columns:62px minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--bd);border-left:4px solid var(--bd);border-radius:8px;background:var(--panel)}
+.ov-time{display:grid;font-variant-numeric:tabular-nums;font-weight:650;font-size:14px;color:var(--tx)}
+.ov-time span{font-weight:400;font-size:12px;color:var(--mu)}
+.ov-what{display:grid;gap:2px;min-width:0}
+.ov-what strong{font-size:14px}
+.ov-what span{color:var(--mu);font-size:12px;overflow-wrap:anywhere}
+.ov-slot.ov-completed{opacity:.6}
+.ov-slot.ov-running{border-left-color:var(--ac)}
+.ov-slot.ov-next{border-color:var(--ac);border-left-color:var(--ac);background:var(--p2)}
+.ov-flag{font-style:normal;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 8px;border-radius:999px;background:var(--ac);color:#fff}
+.ov-flag-now{background:var(--ac-strong)}
+.ov-flag-done{background:transparent;color:var(--mu);border:1px solid var(--bd)}
+.ov-done{margin-top:12px}
+
+@media(max-width:1100px){.ov-split,.ov-charts{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:900px){.ov-cards,.ov-cards-6{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.ov-cards,.ov-cards-6{grid-template-columns:minmax(0,1fr)}.ov-slot{grid-template-columns:52px minmax(0,1fr)}.ov-slot .ov-flag{grid-column:2;justify-self:start}.ov-cols{gap:6px}}
+
+/* HOD Overview: compact summary cards, then department stats in place */
+.ov-cards-6{grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:18px 0 14px}
+.ov-cards-6 .ov-card{padding:11px 13px;gap:2px;border-top-width:3px;border-radius:10px}
+.ov-cards-6 .ov-card small{font-size:12px;line-height:1.3}
+.ov-cards-6 .ov-card strong{font-size:21px;margin:1px 0}
+.ov-cards-6 .ov-card span{font-size:11.5px;line-height:1.35}
+@media(max-width:1350px){.ov-cards-6{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.ov-cards-6{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.ov-cards-6{grid-template-columns:minmax(0,1fr)}}
+
+.ds.ds-embedded{padding:0;max-width:none;margin:0}
+.ds-embed-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px 16px;margin:4px 0 0}
+.ds-embed-head .ds-muted{font-size:12.5px}
+.ds-embed-head a{color:var(--ac);font-weight:600;text-decoration:none}
+.ds-embed-head a:hover{text-decoration:underline}
+.ds-embedded .ds-kpis{margin:12px 0 16px;gap:12px}
+.ds-embedded .ds-kpi{padding:13px 15px;gap:12px}
+.ds-embedded .ov-charts{margin-bottom:16px}
+.ds-embedded .ov-charts .rd-panel{padding:18px 20px}
+.ds-embedded .ov-cols{height:170px}
+.ds-embedded .ds-panel{padding:18px 20px;margin-bottom:16px}
+.ds-embedded .ds-chips{max-height:340px}
+.ds-embedded .ds-blank{margin-top:12px}
